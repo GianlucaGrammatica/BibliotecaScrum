@@ -4,9 +4,7 @@
 // Se un URL non è qui, l'utente vede un errore 404/403.
 $whitelist = [
     '/'          => 'home.php',       // La home page
-    '/test'      => 'test.php',       // Il file di test
-    '/chi-siamo' => 'about.php',      // Esempio
-    '/api/libri' => 'get_books.php'   // Esempio API
+    '/webhook'   => 'webhook.php'     //webhook pull server
 ];
 
 // --- 2. GESTIONE RICHIESTA ---
