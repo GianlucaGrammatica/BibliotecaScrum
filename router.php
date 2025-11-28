@@ -3,7 +3,7 @@
 // Qui decidi quali percorsi URL corrispondono a quali file fisici.
 // Se un URL non è qui, l'utente vede un errore 404/403.
 $whitelist = [
-    '/'          => 'home.php',       // La home page
+    '/'          => 'pages/home.php',       // La home page
     '/webhook'   => 'webhook.php'     //webhook pull server
 ];
 
