@@ -1,5 +1,4 @@
 <?php
-
 // --- CONFIGURAZIONE ---
 $whitelist = [
     '/'        => 'pages/home.php',       // La home page
