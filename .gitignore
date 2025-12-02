@@ -3,6 +3,5 @@ composer.json
 composer.lock
 .git
 .gitignore
-webhook.php
 /vendor
 
