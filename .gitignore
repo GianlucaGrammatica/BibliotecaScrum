@@ -1,0 +1,7 @@
+.env
+composer.json
+composer.lock
+.git
+webook.php
+/vendor
+
