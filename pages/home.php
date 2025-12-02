@@ -134,9 +134,10 @@ if (isset($pdo)) {
 
 <body>
     <div class="sidebar">
-        <h3>Menu Admin</h3>
+        <h3>Home</h3>
         <ul>
-            <li><a href="index.php">Home</a></li>
+            <li><bold>Links:</bold></li>
+            <li><a href="home">Home</a></li>
             <li><a href="https://google.com" target="_blank">Vai su Google</a></li>
         </ul>
     </div>
