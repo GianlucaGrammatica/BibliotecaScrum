@@ -40,6 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <div style="padding: 20px;">
         <h2>Accedi</h2>
+        <div>per test: admin 12345 </div>                                            <!-- DA RIMUOVERE -->
         <form method="post">
             <input name="username" type="text" placeholder="Username" required>
             <input name="password" type="password" placeholder="Password" required>
