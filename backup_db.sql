@@ -17,366 +17,585 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `visitatori`
+-- Table structure for table `accessi_falliti`
 --
 
-DROP TABLE IF EXISTS `visitatori`;
+DROP TABLE IF EXISTS `accessi_falliti`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `visitatori` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `nome` varchar(50) NOT NULL,
-  `data_visita` datetime DEFAULT current_timestamp(),
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=339 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+CREATE TABLE `accessi_falliti` (
+  `id_accessi` int(11) NOT NULL AUTO_INCREMENT,
+  `codice_alfanumerico` varchar(6) NOT NULL,
+  `dataora` datetime DEFAULT current_timestamp(),
+  PRIMARY KEY (`id_accessi`),
+  KEY `codice_alfanumerico` (`codice_alfanumerico`),
+  KEY `idx_accessi_dataora` (`dataora`),
+  CONSTRAINT `accessi_falliti_ibfk_1` FOREIGN KEY (`codice_alfanumerico`) REFERENCES `utenti` (`codice_alfanumerico`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `visitatori`
+-- Dumping data for table `accessi_falliti`
 --
 
-LOCK TABLES `visitatori` WRITE;
-/*!40000 ALTER TABLE `visitatori` DISABLE KEYS */;
-INSERT INTO `visitatori` VALUES
-(1,'Primo Test Manuale','2025-11-27 23:45:23'),
-(2,'Utente Web','2025-11-27 23:46:21'),
-(3,'Utente Web','2025-11-27 23:46:27'),
-(4,'Utente Web','2025-11-28 00:16:19'),
-(5,'Utente Web','2025-11-28 06:31:55'),
-(6,'Utente Web','2025-11-28 06:31:58'),
-(7,'Utente Web','2025-11-28 06:31:58'),
-(8,'Utente Web','2025-11-28 06:31:58'),
-(9,'Utente Web','2025-11-28 06:55:44'),
-(10,'Utente Web','2025-11-28 06:55:47'),
-(11,'Utente Web','2025-11-28 09:29:32'),
-(12,'Utente Web','2025-11-28 09:31:22'),
-(13,'Utente Web','2025-11-28 09:34:48'),
-(14,'Utente Web','2025-11-28 09:35:02'),
-(15,'Utente Web','2025-11-28 09:37:24'),
-(16,'Utente Web','2025-11-28 09:37:32'),
-(17,'Utente Web','2025-11-28 09:37:33'),
-(18,'Utente Web','2025-11-28 09:37:35'),
-(19,'Utente Web','2025-11-28 09:37:45'),
-(20,'Utente Web','2025-11-28 09:38:22'),
-(21,'Utente Web','2025-11-28 09:38:44'),
-(22,'Utente Web','2025-11-28 09:39:00'),
-(23,'Utente Web','2025-11-28 09:39:10'),
-(24,'Utente Web','2025-11-28 09:39:11'),
-(25,'Utente Web','2025-11-28 09:39:12'),
-(26,'Utente Web','2025-11-28 09:39:13'),
-(27,'Utente Web','2025-11-28 09:39:13'),
-(28,'Utente Web','2025-11-28 09:39:13'),
-(29,'Utente Web','2025-11-28 09:39:14'),
-(30,'Utente Web','2025-11-28 09:39:14'),
-(31,'Utente Web','2025-11-28 09:39:14'),
-(32,'Utente Web','2025-11-28 09:39:15'),
-(33,'Utente Web','2025-11-28 09:39:15'),
-(34,'Utente Web','2025-11-28 09:39:15'),
-(35,'Utente Web','2025-11-28 09:39:16'),
-(36,'Utente Web','2025-11-28 09:39:16'),
-(37,'Utente Web','2025-11-28 09:39:17'),
-(38,'Utente Web','2025-11-28 09:39:17'),
-(39,'Utente Web','2025-11-28 09:39:17'),
-(40,'Utente Web','2025-11-28 09:39:17'),
-(41,'Utente Web','2025-11-28 09:39:17'),
-(42,'Utente Web','2025-11-28 09:39:18'),
-(43,'Utente Web','2025-11-28 09:39:18'),
-(44,'Utente Web','2025-11-28 09:39:18'),
-(45,'Utente Web','2025-11-28 09:39:19'),
-(46,'Utente Web','2025-11-28 09:39:19'),
-(47,'Utente Web','2025-11-28 09:39:19'),
-(48,'Utente Web','2025-11-28 09:39:20'),
-(49,'Utente Web','2025-11-28 09:39:20'),
-(50,'Utente Web','2025-11-28 09:39:20'),
-(51,'Utente Web','2025-11-28 09:39:21'),
-(52,'Utente Web','2025-11-28 09:39:21'),
-(53,'Utente Web','2025-11-28 09:39:21'),
-(54,'Utente Web','2025-11-28 09:39:22'),
-(55,'Utente Web','2025-11-28 09:39:22'),
-(56,'Utente Web','2025-11-28 09:39:22'),
-(57,'Utente Web','2025-11-28 09:39:23'),
-(58,'Utente Web','2025-11-28 09:39:23'),
-(59,'Utente Web','2025-11-28 09:39:23'),
-(60,'Utente Web','2025-11-28 09:39:23'),
-(61,'Utente Web','2025-11-28 09:39:24'),
-(62,'Utente Web','2025-11-28 09:39:24'),
-(63,'Utente Web','2025-11-28 09:39:24'),
-(64,'Utente Web','2025-11-28 09:39:24'),
-(65,'Utente Web','2025-11-28 09:39:25'),
-(66,'Utente Web','2025-11-28 09:39:25'),
-(67,'Utente Web','2025-11-28 09:39:25'),
-(68,'Utente Web','2025-11-28 09:39:25'),
-(69,'Utente Web','2025-11-28 09:39:25'),
-(70,'Utente Web','2025-11-28 09:39:25'),
-(71,'Utente Web','2025-11-28 09:39:26'),
-(72,'Utente Web','2025-11-28 09:39:26'),
-(73,'Utente Web','2025-11-28 09:39:26'),
-(74,'Utente Web','2025-11-28 09:39:26'),
-(75,'Utente Web','2025-11-28 09:39:26'),
-(76,'Utente Web','2025-11-28 09:39:26'),
-(77,'Utente Web','2025-11-28 09:39:27'),
-(78,'Utente Web','2025-11-28 09:39:27'),
-(79,'Utente Web','2025-11-28 09:39:27'),
-(80,'Utente Web','2025-11-28 09:39:27'),
-(81,'Utente Web','2025-11-28 09:39:28'),
-(82,'Utente Web','2025-11-28 09:39:28'),
-(83,'Utente Web','2025-11-28 09:39:28'),
-(84,'Utente Web','2025-11-28 09:39:29'),
-(85,'Utente Web','2025-11-28 09:39:29'),
-(86,'Utente Web','2025-11-28 09:39:29'),
-(87,'Utente Web','2025-11-28 09:39:29'),
-(88,'Utente Web','2025-11-28 09:39:30'),
-(89,'Utente Web','2025-11-28 09:39:30'),
-(90,'Utente Web','2025-11-28 09:39:39'),
-(91,'Utente Web','2025-11-28 09:39:46'),
-(92,'Utente Web','2025-11-28 09:40:09'),
-(93,'Utente Web','2025-11-28 09:41:59'),
-(94,'Utente Web','2025-11-28 09:41:59'),
-(95,'Utente Web','2025-11-28 09:42:09'),
-(96,'Utente Web','2025-11-28 09:42:50'),
-(97,'Utente Web','2025-11-28 09:46:41'),
-(98,'Utente Web','2025-11-28 09:46:52'),
-(99,'Utente Web','2025-11-28 09:48:33'),
-(100,'Utente Web','2025-11-28 09:48:40'),
-(101,'Utente Web','2025-11-28 09:48:41'),
-(102,'Utente Web','2025-11-28 09:52:40'),
-(103,'Utente Web','2025-11-28 09:58:40'),
-(104,'Utente Web','2025-11-28 10:00:42'),
-(105,'Utente Web','2025-11-28 10:06:53'),
-(106,'Utente Web','2025-11-28 10:09:01'),
-(107,'Utente Web','2025-11-28 10:10:51'),
-(108,'Utente Web','2025-11-28 10:11:22'),
-(109,'Utente Web','2025-11-28 10:13:54'),
-(110,'Utente Web','2025-11-28 10:20:59'),
-(111,'Utente Web','2025-11-28 10:26:53'),
-(112,'Utente Web','2025-11-28 10:27:09'),
-(113,'Utente Web','2025-11-28 10:27:16'),
-(114,'Utente Web','2025-11-28 10:28:31'),
-(115,'Utente Web','2025-11-28 10:28:34'),
-(116,'Utente Web','2025-11-28 10:28:37'),
-(117,'Utente Web','2025-11-28 10:39:49'),
-(118,'Utente Web','2025-11-28 10:40:21'),
-(119,'Utente Web','2025-11-28 10:41:53'),
-(120,'Utente Web','2025-11-28 10:42:01'),
-(121,'Utente Web','2025-11-28 10:43:27'),
-(122,'Utente Web','2025-11-28 10:44:29'),
-(123,'Utente Web','2025-11-28 10:46:20'),
-(124,'Utente Web','2025-11-28 10:46:23'),
-(125,'Utente Web','2025-11-28 10:47:48'),
-(126,'Utente Web','2025-11-28 10:56:01'),
-(127,'Utente Web','2025-11-28 11:01:35'),
-(128,'Utente Web','2025-11-28 11:01:42'),
-(129,'Utente Web','2025-11-28 11:11:53'),
-(130,'Utente Web','2025-11-28 11:11:55'),
-(131,'Utente Web','2025-11-28 11:28:27'),
-(132,'Utente Web','2025-11-28 11:29:49'),
-(133,'Utente Web','2025-11-28 11:44:35'),
-(134,'Utente Web','2025-11-28 11:50:10'),
-(135,'Utente Web','2025-11-28 11:50:38'),
-(136,'Utente Web','2025-11-28 11:52:09'),
-(137,'Utente Web','2025-11-28 19:18:21'),
-(138,'Utente Web','2025-11-28 23:55:29'),
-(139,'Utente Web','2025-11-29 07:26:17'),
-(140,'Utente Web','2025-11-29 07:49:04'),
-(141,'Utente Web','2025-11-29 07:49:14'),
-(142,'Utente Web','2025-11-29 07:49:16'),
-(143,'Utente Web','2025-11-29 07:49:18'),
-(144,'Utente Web','2025-11-29 07:49:19'),
-(145,'Utente Web','2025-11-29 07:49:20'),
-(146,'Utente Web','2025-11-29 07:49:21'),
-(147,'Utente Web','2025-11-29 08:47:25'),
-(148,'Utente Web','2025-11-29 10:07:07'),
-(149,'Utente Web','2025-11-29 11:07:04'),
-(150,'Utente Web','2025-11-30 04:50:50'),
-(151,'Utente Web','2025-12-01 08:58:29'),
-(152,'Utente Web','2025-12-01 08:58:56'),
-(153,'Utente Web','2025-12-01 08:58:58'),
-(154,'Utente Web','2025-12-01 08:58:59'),
-(155,'Utente Web','2025-12-02 13:59:28'),
-(156,'Utente Web','2025-12-02 14:44:37'),
-(157,'Utente Web','2025-12-02 14:46:44'),
-(158,'Utente Web','2025-12-02 17:32:57'),
-(159,'Utente Web','2025-12-02 17:33:53'),
-(160,'Utente Web','2025-12-02 17:35:50'),
-(161,'Utente Web','2025-12-02 17:36:46'),
-(162,'Utente Web','2025-12-02 17:36:52'),
-(163,'Utente Web','2025-12-02 17:37:25'),
-(164,'Utente Web','2025-12-02 17:46:45'),
-(165,'Utente Web','2025-12-02 17:48:19'),
-(166,'Utente Web','2025-12-02 17:48:54'),
-(167,'Utente Web','2025-12-02 17:49:01'),
-(168,'Utente Web','2025-12-03 11:04:58'),
-(169,'Utente Web','2025-12-03 11:06:18'),
-(170,'Utente Web','2025-12-03 11:25:31'),
-(171,'Utente Web','2025-12-03 11:38:49'),
-(172,'Utente Web','2025-12-04 08:39:44'),
-(173,'Utente Web','2025-12-04 17:29:04'),
-(174,'Utente Web','2025-12-04 17:29:16'),
-(175,'Utente Web','2025-12-04 17:29:27'),
-(176,'Utente Web','2025-12-04 17:31:12'),
-(177,'Utente Web','2025-12-05 07:57:37'),
-(178,'Utente Web','2025-12-05 07:57:46'),
-(179,'Utente Web','2025-12-05 07:57:58'),
-(180,'Utente Web','2025-12-05 09:12:38'),
-(181,'Utente Web','2025-12-05 09:12:50'),
-(182,'Utente Web','2025-12-05 09:20:47'),
-(183,'Utente Web','2025-12-05 09:20:59'),
-(184,'Utente Web','2025-12-05 09:43:39'),
-(185,'Utente Web','2025-12-05 09:44:21'),
-(186,'Utente Web','2025-12-05 10:34:32'),
-(187,'Utente Web','2025-12-05 10:34:45'),
-(188,'Utente Web','2025-12-05 10:34:59'),
-(189,'Utente Web','2025-12-05 10:35:07'),
-(190,'Utente Web','2025-12-05 10:35:08'),
-(191,'Utente Web','2025-12-05 10:35:08'),
-(192,'Utente Web','2025-12-05 10:35:09'),
-(193,'Utente Web','2025-12-05 10:35:09'),
-(194,'Utente Web','2025-12-05 10:35:10'),
-(195,'Utente Web','2025-12-05 10:35:10'),
-(196,'Utente Web','2025-12-05 10:35:11'),
-(197,'Utente Web','2025-12-05 10:35:11'),
-(198,'Utente Web','2025-12-05 10:35:11'),
-(199,'Utente Web','2025-12-05 10:35:11'),
-(200,'Utente Web','2025-12-05 10:35:11'),
-(201,'Utente Web','2025-12-05 10:35:12'),
-(202,'Utente Web','2025-12-05 10:35:12'),
-(203,'Utente Web','2025-12-05 10:35:13'),
-(204,'Utente Web','2025-12-05 10:35:13'),
-(205,'Utente Web','2025-12-05 10:35:13'),
-(206,'Utente Web','2025-12-05 10:35:14'),
-(207,'Utente Web','2025-12-05 10:35:15'),
-(208,'Utente Web','2025-12-05 10:35:15'),
-(209,'Utente Web','2025-12-05 10:35:15'),
-(210,'Utente Web','2025-12-05 10:35:16'),
-(211,'Utente Web','2025-12-05 10:35:16'),
-(212,'Utente Web','2025-12-05 10:36:00'),
-(213,'Utente Web','2025-12-05 14:23:38'),
-(214,'Utente Web','2025-12-05 14:30:51'),
-(215,'Utente Web','2025-12-05 14:31:52'),
-(216,'Utente Web','2025-12-05 14:33:45'),
-(217,'Utente Web','2025-12-05 14:34:00'),
-(218,'Utente Web','2025-12-05 14:34:16'),
-(219,'Utente Web','2025-12-05 14:41:58'),
-(220,'Utente Web','2025-12-05 14:48:07'),
-(221,'Utente Web','2025-12-05 14:48:43'),
-(222,'Utente Web','2025-12-05 14:49:39'),
-(223,'Utente Web','2025-12-05 14:50:57'),
-(224,'Utente Web','2025-12-05 14:51:52'),
-(225,'Utente Web','2025-12-05 14:51:54'),
-(226,'Utente Web','2025-12-05 14:52:35'),
-(227,'Utente Web','2025-12-05 14:55:31'),
-(228,'Utente Web','2025-12-05 14:55:32'),
-(229,'Utente Web','2025-12-05 14:56:07'),
-(230,'Utente Web','2025-12-05 14:56:10'),
-(231,'Utente Web','2025-12-05 15:00:40'),
-(232,'Utente Web','2025-12-05 15:01:01'),
-(233,'Utente Web','2025-12-05 15:03:02'),
-(234,'Utente Web','2025-12-05 15:12:27'),
-(235,'Utente Web','2025-12-05 15:15:47'),
-(236,'Utente Web','2025-12-05 15:16:04'),
-(237,'Utente Web','2025-12-05 15:16:05'),
-(238,'Utente Web','2025-12-05 15:17:50'),
-(239,'Utente Web','2025-12-05 15:17:51'),
-(240,'Utente Web','2025-12-05 15:18:49'),
-(241,'Utente Web','2025-12-05 15:19:25'),
-(242,'Utente Web','2025-12-05 15:19:31'),
-(243,'Utente Web','2025-12-05 15:27:44'),
-(244,'Utente Web','2025-12-05 15:27:48'),
-(245,'Utente Web','2025-12-05 15:27:50'),
-(246,'Utente Web','2025-12-05 15:27:54'),
-(247,'Utente Web','2025-12-05 15:28:00'),
-(248,'Utente Web','2025-12-05 15:29:58'),
-(249,'Utente Web','2025-12-05 15:30:00'),
-(250,'Utente Web','2025-12-05 15:30:02'),
-(251,'Utente Web','2025-12-05 15:32:29'),
-(252,'Utente Web','2025-12-05 15:34:20'),
-(253,'Utente Web','2025-12-05 15:34:22'),
-(254,'Utente Web','2025-12-05 15:34:52'),
-(255,'Utente Web','2025-12-05 15:34:57'),
-(256,'Utente Web','2025-12-05 15:38:20'),
-(257,'Utente Web','2025-12-05 15:38:22'),
-(258,'Utente Web','2025-12-05 15:39:37'),
-(259,'Utente Web','2025-12-05 15:39:56'),
-(260,'Utente Web','2025-12-05 15:39:56'),
-(261,'Utente Web','2025-12-05 15:41:12'),
-(262,'Utente Web','2025-12-05 15:41:29'),
-(263,'Utente Web','2025-12-05 15:43:55'),
-(264,'Utente Web','2025-12-05 15:51:26'),
-(265,'Utente Web','2025-12-05 15:53:01'),
-(266,'Utente Web','2025-12-05 15:53:03'),
-(267,'Utente Web','2025-12-05 15:54:09'),
-(268,'Utente Web','2025-12-05 15:55:28'),
-(269,'Utente Web','2025-12-05 15:56:21'),
-(270,'Utente Web','2025-12-05 15:56:25'),
-(271,'Utente Web','2025-12-05 15:56:45'),
-(272,'Utente Web','2025-12-05 15:57:03'),
-(273,'Utente Web','2025-12-05 15:57:04'),
-(274,'Utente Web','2025-12-05 15:58:10'),
-(275,'Utente Web','2025-12-05 15:58:21'),
-(276,'Utente Web','2025-12-05 15:59:42'),
-(277,'Utente Web','2025-12-05 16:00:48'),
-(278,'Utente Web','2025-12-05 16:00:49'),
-(279,'Utente Web','2025-12-05 16:00:51'),
-(280,'Utente Web','2025-12-05 16:00:51'),
-(281,'Utente Web','2025-12-05 16:00:53'),
-(282,'Utente Web','2025-12-05 16:01:39'),
-(283,'Utente Web','2025-12-05 16:02:05'),
-(284,'Utente Web','2025-12-05 16:02:32'),
-(285,'Utente Web','2025-12-05 16:03:46'),
-(286,'Utente Web','2025-12-05 16:04:48'),
-(287,'Utente Web','2025-12-05 16:05:04'),
-(288,'Utente Web','2025-12-05 16:07:18'),
-(289,'Utente Web','2025-12-05 16:08:14'),
-(290,'Utente Web','2025-12-05 16:08:16'),
-(291,'Utente Web','2025-12-05 16:08:17'),
-(292,'Utente Web','2025-12-05 16:11:45'),
-(293,'Utente Web','2025-12-05 16:11:54'),
-(294,'Utente Web','2025-12-05 16:12:33'),
-(295,'Utente Web','2025-12-05 16:13:24'),
-(296,'Utente Web','2025-12-05 16:13:52'),
-(297,'Utente Web','2025-12-05 16:14:03'),
-(298,'Utente Web','2025-12-05 16:14:07'),
-(299,'Utente Web','2025-12-05 16:14:31'),
-(300,'Utente Web','2025-12-05 16:15:00'),
-(301,'Utente Web','2025-12-05 16:15:03'),
-(302,'Utente Web','2025-12-05 16:16:00'),
-(303,'Utente Web','2025-12-05 16:20:25'),
-(304,'Utente Web','2025-12-05 16:22:23'),
-(305,'Utente Web','2025-12-05 16:22:42'),
-(306,'Utente Web','2025-12-05 16:23:39'),
-(307,'Utente Web','2025-12-05 16:24:38'),
-(308,'Utente Web','2025-12-05 16:57:58'),
-(309,'Utente Web','2025-12-05 16:58:02'),
-(310,'Utente Web','2025-12-05 16:58:41'),
-(311,'Utente Web','2025-12-05 17:06:04'),
-(312,'Utente Web','2025-12-05 17:06:53'),
-(313,'Utente Web','2025-12-05 17:09:31'),
-(314,'Utente Web','2025-12-05 17:12:17'),
-(315,'Utente Web','2025-12-05 17:12:20'),
-(316,'Utente Web','2025-12-05 17:12:22'),
-(317,'Utente Web','2025-12-05 17:14:06'),
-(318,'Utente Web','2025-12-05 17:14:54'),
-(319,'Utente Web','2025-12-05 17:15:10'),
-(320,'Utente Web','2025-12-06 09:22:09'),
-(321,'Utente Web','2025-12-06 09:22:14'),
-(322,'Utente Web','2025-12-06 09:22:18'),
-(323,'Utente Web','2025-12-06 09:29:56'),
-(324,'Utente Web','2025-12-06 09:30:25'),
-(325,'Utente Web','2025-12-06 09:30:43'),
-(326,'Utente Web','2025-12-06 09:30:47'),
-(327,'Utente Web','2025-12-06 09:34:31'),
-(328,'Utente Web','2025-12-06 09:34:59'),
-(329,'Utente Web','2025-12-06 10:09:35'),
-(330,'Utente Web','2025-12-06 10:45:45'),
-(331,'Utente Web','2025-12-06 10:55:32'),
-(332,'Utente Web','2025-12-07 14:59:04'),
-(333,'Utente Web','2025-12-07 14:59:08'),
-(334,'Utente Web','2025-12-07 15:30:52'),
-(335,'Utente Web','2025-12-07 15:31:39'),
-(336,'Utente Web','2025-12-07 18:46:09'),
-(337,'Utente Web','2025-12-07 19:17:13'),
-(338,'Utente Web','2025-12-07 19:20:13');
-/*!40000 ALTER TABLE `visitatori` ENABLE KEYS */;
+LOCK TABLES `accessi_falliti` WRITE;
+/*!40000 ALTER TABLE `accessi_falliti` DISABLE KEYS */;
+INSERT INTO `accessi_falliti` VALUES
+(1,'000001','2025-12-08 13:26:31'),
+(2,'000001','2025-12-08 13:26:37'),
+(3,'000001','2025-12-08 13:26:37');
+/*!40000 ALTER TABLE `accessi_falliti` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `autore_libro`
+--
+
+DROP TABLE IF EXISTS `autore_libro`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `autore_libro` (
+  `id_autore` int(11) NOT NULL,
+  `isbn` bigint(20) NOT NULL,
+  PRIMARY KEY (`id_autore`,`isbn`),
+  KEY `isbn` (`isbn`),
+  CONSTRAINT `autore_libro_ibfk_1` FOREIGN KEY (`id_autore`) REFERENCES `autori` (`id_autore`),
+  CONSTRAINT `autore_libro_ibfk_2` FOREIGN KEY (`isbn`) REFERENCES `libri` (`isbn`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `autore_libro`
+--
+
+LOCK TABLES `autore_libro` WRITE;
+/*!40000 ALTER TABLE `autore_libro` DISABLE KEYS */;
+/*!40000 ALTER TABLE `autore_libro` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `autori`
+--
+
+DROP TABLE IF EXISTS `autori`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `autori` (
+  `id_autore` int(11) NOT NULL AUTO_INCREMENT,
+  `nome` varchar(100) NOT NULL,
+  `cognome` varchar(100) NOT NULL,
+  PRIMARY KEY (`id_autore`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `autori`
+--
+
+LOCK TABLES `autori` WRITE;
+/*!40000 ALTER TABLE `autori` DISABLE KEYS */;
+/*!40000 ALTER TABLE `autori` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `badge`
+--
+
+DROP TABLE IF EXISTS `badge`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `badge` (
+  `id_badge` int(11) NOT NULL AUTO_INCREMENT,
+  `nome` varchar(255) NOT NULL,
+  `icona` varchar(255) NOT NULL,
+  `descrizione` text DEFAULT NULL,
+  `tipo` varchar(100) DEFAULT NULL,
+  `target_numerico` smallint(6) NOT NULL,
+  `data_fine` date DEFAULT NULL,
+  `root` smallint(6) DEFAULT NULL,
+  PRIMARY KEY (`id_badge`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `badge`
+--
+
+LOCK TABLES `badge` WRITE;
+/*!40000 ALTER TABLE `badge` DISABLE KEYS */;
+/*!40000 ALTER TABLE `badge` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `categorie`
+--
+
+DROP TABLE IF EXISTS `categorie`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `categorie` (
+  `id_categoria` int(11) NOT NULL,
+  `categoria` varchar(100) DEFAULT NULL,
+  `isbn` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`id_categoria`),
+  KEY `isbn` (`isbn`),
+  CONSTRAINT `categorie_ibfk_1` FOREIGN KEY (`isbn`) REFERENCES `libri` (`isbn`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `categorie`
+--
+
+LOCK TABLES `categorie` WRITE;
+/*!40000 ALTER TABLE `categorie` DISABLE KEYS */;
+/*!40000 ALTER TABLE `categorie` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `consensi`
+--
+
+DROP TABLE IF EXISTS `consensi`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `consensi` (
+  `id_consenso` int(11) NOT NULL AUTO_INCREMENT,
+  `codice_alfanumerico` varchar(6) NOT NULL,
+  `tipo_consenso` varchar(50) DEFAULT NULL,
+  `data_consenso` date DEFAULT NULL,
+  `indirizzo_ip` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id_consenso`),
+  KEY `codice_alfanumerico` (`codice_alfanumerico`),
+  CONSTRAINT `consensi_ibfk_1` FOREIGN KEY (`codice_alfanumerico`) REFERENCES `utenti` (`codice_alfanumerico`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `consensi`
+--
+
+LOCK TABLES `consensi` WRITE;
+/*!40000 ALTER TABLE `consensi` DISABLE KEYS */;
+/*!40000 ALTER TABLE `consensi` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `copie`
+--
+
+DROP TABLE IF EXISTS `copie`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `copie` (
+  `id_copia` int(11) NOT NULL AUTO_INCREMENT,
+  `isbn` bigint(20) DEFAULT NULL,
+  `ean` varchar(50) NOT NULL,
+  `condizione` smallint(6) NOT NULL,
+  `disponibile` tinyint(1) NOT NULL,
+  `anno_pubblicazione` year(4) DEFAULT NULL,
+  `conferma_anno_pubblicazione` tinyint(1) DEFAULT 1,
+  `editore` varchar(100) NOT NULL,
+  `copertina` varchar(255) NOT NULL,
+  `taf_rfid` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id_copia`),
+  KEY `isbn` (`isbn`),
+  CONSTRAINT `copie_ibfk_1` FOREIGN KEY (`isbn`) REFERENCES `libri` (`isbn`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `copie`
+--
+
+LOCK TABLES `copie` WRITE;
+/*!40000 ALTER TABLE `copie` DISABLE KEYS */;
+/*!40000 ALTER TABLE `copie` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `libri`
+--
+
+DROP TABLE IF EXISTS `libri`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `libri` (
+  `isbn` bigint(20) NOT NULL,
+  `titolo` varchar(255) NOT NULL,
+  `descrizione` text DEFAULT NULL,
+  PRIMARY KEY (`isbn`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `libri`
+--
+
+LOCK TABLES `libri` WRITE;
+/*!40000 ALTER TABLE `libri` DISABLE KEYS */;
+/*!40000 ALTER TABLE `libri` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `libri_consigliati`
+--
+
+DROP TABLE IF EXISTS `libri_consigliati`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `libri_consigliati` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `isbn` bigint(20) NOT NULL,
+  `codice_alfanumerico` varchar(6) DEFAULT NULL,
+  `n_consigli` int(11) DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `isbn` (`isbn`),
+  KEY `codice_alfanumerico` (`codice_alfanumerico`),
+  CONSTRAINT `libri_consigliati_ibfk_1` FOREIGN KEY (`isbn`) REFERENCES `libri` (`isbn`),
+  CONSTRAINT `libri_consigliati_ibfk_2` FOREIGN KEY (`codice_alfanumerico`) REFERENCES `utenti` (`codice_alfanumerico`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `libri_consigliati`
+--
+
+LOCK TABLES `libri_consigliati` WRITE;
+/*!40000 ALTER TABLE `libri_consigliati` DISABLE KEYS */;
+/*!40000 ALTER TABLE `libri_consigliati` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `libro_categoria`
+--
+
+DROP TABLE IF EXISTS `libro_categoria`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `libro_categoria` (
+  `isbn` bigint(20) NOT NULL,
+  `id_categoria` int(11) NOT NULL,
+  PRIMARY KEY (`isbn`,`id_categoria`),
+  KEY `id_categoria` (`id_categoria`),
+  CONSTRAINT `libro_categoria_ibfk_1` FOREIGN KEY (`isbn`) REFERENCES `libri` (`isbn`),
+  CONSTRAINT `libro_categoria_ibfk_2` FOREIGN KEY (`id_categoria`) REFERENCES `categorie` (`id_categoria`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `libro_categoria`
+--
+
+LOCK TABLES `libro_categoria` WRITE;
+/*!40000 ALTER TABLE `libro_categoria` DISABLE KEYS */;
+/*!40000 ALTER TABLE `libro_categoria` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `log_monitoraggi`
+--
+
+DROP TABLE IF EXISTS `log_monitoraggi`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `log_monitoraggi` (
+  `id_log` int(11) NOT NULL AUTO_INCREMENT,
+  `codice_alfanumerico` varchar(6) NOT NULL,
+  `tipo_evento` varchar(50) NOT NULL,
+  `descrizione` text DEFAULT NULL,
+  `indirizzo_ip` varchar(45) DEFAULT NULL,
+  `dataora_evento` datetime DEFAULT current_timestamp(),
+  PRIMARY KEY (`id_log`),
+  KEY `codice_alfanumerico` (`codice_alfanumerico`),
+  CONSTRAINT `log_monitoraggi_ibfk_1` FOREIGN KEY (`codice_alfanumerico`) REFERENCES `utenti` (`codice_alfanumerico`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `log_monitoraggi`
+--
+
+LOCK TABLES `log_monitoraggi` WRITE;
+/*!40000 ALTER TABLE `log_monitoraggi` DISABLE KEYS */;
+/*!40000 ALTER TABLE `log_monitoraggi` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `multe`
+--
+
+DROP TABLE IF EXISTS `multe`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `multe` (
+  `id_multa` int(11) NOT NULL AUTO_INCREMENT,
+  `id_prestito` int(11) NOT NULL,
+  `codice_alfanumerico` varchar(6) NOT NULL,
+  `importo` decimal(10,2) NOT NULL,
+  `causale` text NOT NULL,
+  `data_creata` date DEFAULT current_timestamp(),
+  PRIMARY KEY (`id_multa`),
+  KEY `id_prestito` (`id_prestito`),
+  KEY `codice_alfanumerico` (`codice_alfanumerico`),
+  CONSTRAINT `multe_ibfk_1` FOREIGN KEY (`id_prestito`) REFERENCES `prestiti` (`id_prestito`),
+  CONSTRAINT `multe_ibfk_2` FOREIGN KEY (`codice_alfanumerico`) REFERENCES `utenti` (`codice_alfanumerico`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `multe`
+--
+
+LOCK TABLES `multe` WRITE;
+/*!40000 ALTER TABLE `multe` DISABLE KEYS */;
+/*!40000 ALTER TABLE `multe` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `notifiche`
+--
+
+DROP TABLE IF EXISTS `notifiche`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `notifiche` (
+  `id_notifica` int(11) NOT NULL AUTO_INCREMENT,
+  `codice_alfanumerico` varchar(6) NOT NULL,
+  `titolo` varchar(255) NOT NULL,
+  `messaggio` text NOT NULL,
+  `tipo` varchar(50) NOT NULL,
+  `dataora_invio` datetime DEFAULT current_timestamp(),
+  PRIMARY KEY (`id_notifica`),
+  KEY `codice_alfanumerico` (`codice_alfanumerico`),
+  CONSTRAINT `notifiche_ibfk_1` FOREIGN KEY (`codice_alfanumerico`) REFERENCES `utenti` (`codice_alfanumerico`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `notifiche`
+--
+
+LOCK TABLES `notifiche` WRITE;
+/*!40000 ALTER TABLE `notifiche` DISABLE KEYS */;
+/*!40000 ALTER TABLE `notifiche` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `pagamenti`
+--
+
+DROP TABLE IF EXISTS `pagamenti`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `pagamenti` (
+  `id_pagamento` int(11) NOT NULL AUTO_INCREMENT,
+  `codice_alfanumerico` varchar(6) NOT NULL,
+  `data_apertura` date DEFAULT NULL,
+  `data_chiusura` date DEFAULT NULL,
+  `importo` decimal(10,2) NOT NULL,
+  `causale` text NOT NULL,
+  PRIMARY KEY (`id_pagamento`),
+  KEY `codice_alfanumerico` (`codice_alfanumerico`),
+  CONSTRAINT `pagamenti_ibfk_1` FOREIGN KEY (`codice_alfanumerico`) REFERENCES `utenti` (`codice_alfanumerico`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `pagamenti`
+--
+
+LOCK TABLES `pagamenti` WRITE;
+/*!40000 ALTER TABLE `pagamenti` DISABLE KEYS */;
+/*!40000 ALTER TABLE `pagamenti` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `prenotazioni`
+--
+
+DROP TABLE IF EXISTS `prenotazioni`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `prenotazioni` (
+  `id_prenotazione` int(11) NOT NULL AUTO_INCREMENT,
+  `codice_alfanumerico` varchar(6) NOT NULL,
+  `isbn` bigint(20) DEFAULT NULL,
+  `data_prenotazione` date DEFAULT NULL,
+  `data_assegnazione` date DEFAULT NULL,
+  PRIMARY KEY (`id_prenotazione`),
+  KEY `codice_alfanumerico` (`codice_alfanumerico`),
+  KEY `isbn` (`isbn`),
+  CONSTRAINT `prenotazioni_ibfk_1` FOREIGN KEY (`codice_alfanumerico`) REFERENCES `utenti` (`codice_alfanumerico`),
+  CONSTRAINT `prenotazioni_ibfk_2` FOREIGN KEY (`isbn`) REFERENCES `libri` (`isbn`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `prenotazioni`
+--
+
+LOCK TABLES `prenotazioni` WRITE;
+/*!40000 ALTER TABLE `prenotazioni` DISABLE KEYS */;
+/*!40000 ALTER TABLE `prenotazioni` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `prestiti`
+--
+
+DROP TABLE IF EXISTS `prestiti`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `prestiti` (
+  `id_prestito` int(11) NOT NULL AUTO_INCREMENT,
+  `codice_alfanumerico` varchar(6) NOT NULL,
+  `id_copia` int(11) DEFAULT NULL,
+  `data_prestito` date DEFAULT NULL,
+  `data_scadenza` date DEFAULT NULL,
+  `data_restituzione` date DEFAULT NULL,
+  `num_rinnovi` int(11) DEFAULT 0,
+  PRIMARY KEY (`id_prestito`),
+  KEY `codice_alfanumerico` (`codice_alfanumerico`),
+  KEY `id_copia` (`id_copia`),
+  CONSTRAINT `prestiti_ibfk_1` FOREIGN KEY (`codice_alfanumerico`) REFERENCES `utenti` (`codice_alfanumerico`),
+  CONSTRAINT `prestiti_ibfk_2` FOREIGN KEY (`id_copia`) REFERENCES `copie` (`id_copia`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `prestiti`
+--
+
+LOCK TABLES `prestiti` WRITE;
+/*!40000 ALTER TABLE `prestiti` DISABLE KEYS */;
+/*!40000 ALTER TABLE `prestiti` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `recensioni`
+--
+
+DROP TABLE IF EXISTS `recensioni`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `recensioni` (
+  `id_recensione` int(11) NOT NULL AUTO_INCREMENT,
+  `isbn` bigint(20) DEFAULT NULL,
+  `codice_alfanumerico` varchar(6) NOT NULL,
+  `voto` smallint(6) NOT NULL,
+  `commento` text NOT NULL,
+  `data_commento` date DEFAULT current_timestamp(),
+  `like_count` int(11) DEFAULT 0,
+  `dislike_count` int(11) DEFAULT 0,
+  PRIMARY KEY (`id_recensione`),
+  KEY `isbn` (`isbn`),
+  KEY `codice_alfanumerico` (`codice_alfanumerico`),
+  CONSTRAINT `recensioni_ibfk_1` FOREIGN KEY (`isbn`) REFERENCES `libri` (`isbn`),
+  CONSTRAINT `recensioni_ibfk_2` FOREIGN KEY (`codice_alfanumerico`) REFERENCES `utenti` (`codice_alfanumerico`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `recensioni`
+--
+
+LOCK TABLES `recensioni` WRITE;
+/*!40000 ALTER TABLE `recensioni` DISABLE KEYS */;
+/*!40000 ALTER TABLE `recensioni` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `ruoli`
+--
+
+DROP TABLE IF EXISTS `ruoli`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `ruoli` (
+  `codice_alfanumerico` varchar(6) DEFAULT NULL,
+  `studente` tinyint(1) DEFAULT 0,
+  `docente` tinyint(1) DEFAULT 0,
+  `bibliotecario` tinyint(1) DEFAULT 0,
+  `amministratore` tinyint(1) DEFAULT 0,
+  KEY `codice_alfanumerico` (`codice_alfanumerico`),
+  CONSTRAINT `ruoli_ibfk_1` FOREIGN KEY (`codice_alfanumerico`) REFERENCES `utenti` (`codice_alfanumerico`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ruoli`
+--
+
+LOCK TABLES `ruoli` WRITE;
+/*!40000 ALTER TABLE `ruoli` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ruoli` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `utente_badge`
+--
+
+DROP TABLE IF EXISTS `utente_badge`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `utente_badge` (
+  `id_ub` int(11) NOT NULL AUTO_INCREMENT,
+  `id_badge` int(11) DEFAULT NULL,
+  `codice_alfanumerico` varchar(6) NOT NULL,
+  `livello` smallint(6) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id_ub`),
+  KEY `id_badge` (`id_badge`),
+  KEY `codice_alfanumerico` (`codice_alfanumerico`),
+  CONSTRAINT `utente_badge_ibfk_1` FOREIGN KEY (`id_badge`) REFERENCES `badge` (`id_badge`),
+  CONSTRAINT `utente_badge_ibfk_2` FOREIGN KEY (`codice_alfanumerico`) REFERENCES `utenti` (`codice_alfanumerico`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `utente_badge`
+--
+
+LOCK TABLES `utente_badge` WRITE;
+/*!40000 ALTER TABLE `utente_badge` DISABLE KEYS */;
+/*!40000 ALTER TABLE `utente_badge` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `utenti`
+--
+
+DROP TABLE IF EXISTS `utenti`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `utenti` (
+  `codice_alfanumerico` varchar(6) NOT NULL,
+  `username` varchar(50) DEFAULT NULL,
+  `nome` varchar(50) NOT NULL,
+  `cognome` varchar(100) NOT NULL,
+  `codice_fiscale` char(16) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `password_hash` varchar(255) NOT NULL,
+  `livello_privato` tinyint(3) unsigned DEFAULT 0,
+  `login_bloccato` tinyint(1) DEFAULT 0,
+  `account_bloccato` tinyint(1) DEFAULT 0,
+  `affidabile` tinyint(1) DEFAULT 0,
+  `email_confermata` tinyint(1) DEFAULT 0,
+  `data_creazione` date DEFAULT current_timestamp(),
+  PRIMARY KEY (`codice_alfanumerico`),
+  CONSTRAINT `chk_no_cf_username` CHECK (!(`username` regexp '^[A-Z]{6}[0-9]{2}[A-Z][0-9]{2}[A-Z][0-9]{3}[A-Z]$'))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `utenti`
+--
+
+LOCK TABLES `utenti` WRITE;
+/*!40000 ALTER TABLE `utenti` DISABLE KEYS */;
+INSERT INTO `utenti` VALUES
+('000001','TestUsername1','Cobra','Ivi','GRRRMN07S01A655L','prova@mail.com','passwordhash1',0,0,0,0,0,'2025-12-08');
+/*!40000 ALTER TABLE `utenti` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -388,4 +607,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-08  2:00:04
+-- Dump completed on 2025-12-08 14:11:51
