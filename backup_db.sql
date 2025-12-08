@@ -601,7 +601,158 @@ UNLOCK TABLES;
 --
 -- Dumping routines for database 'database_sito'
 --
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `CheckLoginUser` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb3 */ ;
+/*!50003 SET character_set_results = utf8mb3 */ ;
+/*!50003 SET collation_connection  = utf8mb3_general_ci */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `CheckLoginUser`(
+    IN p_input_login VARCHAR(255),  
+    IN p_password_input VARCHAR(255), 
+    OUT p_result VARCHAR(50)
+)
+BEGIN
+    DECLARE v_codice VARCHAR(6);
+    DECLARE v_stored_pass VARCHAR(255);
+    DECLARE v_login_bloccato BOOLEAN;
+    DECLARE v_failed_attempts INT;
 
--- insufficient privileges to SHOW CREATE PROCEDURE `CheckLoginUser`
--- does utente_sito have permissions on mysql.proc?
+    
+    
+    
+    
+    
+    DELETE FROM accessi_falliti 
+    WHERE dataora < (NOW() - INTERVAL 15 MINUTE);
 
+    
+    SELECT codice_alfanumerico, password_hash, login_bloccato
+    INTO v_codice, v_stored_pass, v_login_bloccato
+    FROM utenti
+    WHERE email = p_input_login 
+       OR username = p_input_login 
+       OR codice_fiscale = p_input_login
+    LIMIT 1;
+
+    
+    IF v_codice IS NULL THEN
+        SET p_result = 'utente_non_trovato';
+    ELSE
+        
+        IF v_login_bloccato = 1 THEN
+            SET p_result = 'blocked:1';
+        ELSE
+            
+            
+            SELECT COUNT(*)
+            INTO v_failed_attempts
+            FROM accessi_falliti
+            WHERE codice_alfanumerico = v_codice;
+
+            IF v_failed_attempts >= 3 THEN
+                SET p_result = 'blocked:2';
+            ELSE
+                
+                IF p_password_input = v_stored_pass THEN
+                    
+                    
+                    DELETE FROM accessi_falliti WHERE codice_alfanumerico = v_codice;
+                    
+                    SET p_result = v_codice;
+                ELSE
+                    
+                    SET p_result = 'password_sbagliata';
+                    
+                    
+                    INSERT INTO accessi_falliti (codice_alfanumerico, dataora) 
+                    VALUES (v_codice, NOW());
+                END IF;
+            END IF;
+        END IF;
+    END IF;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_crea_utente_alfanumerico` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb3 */ ;
+/*!50003 SET character_set_results = utf8mb3 */ ;
+/*!50003 SET collation_connection  = utf8mb3_general_ci */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_crea_utente_alfanumerico`(
+    IN p_username VARCHAR(50),
+    IN p_nome VARCHAR(50),
+    IN p_cognome VARCHAR(100),
+    IN p_codice_fiscale CHAR(16),
+    IN p_email VARCHAR(255),
+    IN p_password_hash VARCHAR(255)
+)
+BEGIN
+    
+    DECLARE v_ultimo_codice VARCHAR(6);
+    DECLARE v_nuovo_valore_decimale BIGINT;
+    DECLARE v_nuovo_codice VARCHAR(6);
+
+    
+    
+    SELECT MAX(codice_alfanumerico) 
+    INTO v_ultimo_codice 
+    FROM utenti;
+
+    
+    IF v_ultimo_codice IS NULL THEN
+        
+        SET v_nuovo_codice = '000001';
+    ELSE
+        
+        
+        SET v_nuovo_valore_decimale = CONV(v_ultimo_codice, 36, 10) + 1;
+        
+        
+        
+        
+        SET v_nuovo_codice = LPAD(UPPER(CONV(v_nuovo_valore_decimale, 10, 36)), 6, '0');
+    END IF;
+
+    
+    INSERT INTO utenti (
+        codice_alfanumerico, username, nome, cognome, 
+        codice_fiscale, email, password_hash
+    ) VALUES (
+        v_nuovo_codice, p_username, p_nome, p_cognome, 
+        p_codice_fiscale, p_email, p_password_hash
+    );
+    
+    
+    SELECT v_nuovo_codice as nuovo_id;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2025-12-08 14:20:12
