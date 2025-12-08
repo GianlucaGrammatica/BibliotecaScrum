@@ -31,7 +31,7 @@ CREATE TABLE `accessi_falliti` (
   KEY `codice_alfanumerico` (`codice_alfanumerico`),
   KEY `idx_accessi_dataora` (`dataora`),
   CONSTRAINT `accessi_falliti_ibfk_1` FOREIGN KEY (`codice_alfanumerico`) REFERENCES `utenti` (`codice_alfanumerico`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -40,10 +40,6 @@ CREATE TABLE `accessi_falliti` (
 
 LOCK TABLES `accessi_falliti` WRITE;
 /*!40000 ALTER TABLE `accessi_falliti` DISABLE KEYS */;
-INSERT INTO `accessi_falliti` VALUES
-(1,'000001','2025-12-08 13:26:31'),
-(2,'000001','2025-12-08 13:26:37'),
-(3,'000001','2025-12-08 13:26:37');
 /*!40000 ALTER TABLE `accessi_falliti` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -594,7 +590,7 @@ CREATE TABLE `utenti` (
 LOCK TABLES `utenti` WRITE;
 /*!40000 ALTER TABLE `utenti` DISABLE KEYS */;
 INSERT INTO `utenti` VALUES
-('000001','TestUsername1','Cobra','Ivi','GRRRMN07S01A655L','prova@mail.com','passwordhash1',0,0,0,0,0,'2025-12-08');
+('000001','TestUsername1','Cobra','Ivi','GRRRMN07S01A655L','prova@mail.com','c0934c19bfe8216c60ef23168c040168caa17037fa4c06c5a3c1100e0c9d0663',0,0,0,0,0,'2025-12-08');
 /*!40000 ALTER TABLE `utenti` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -755,4 +751,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-08 14:20:12
+-- Dump completed on 2025-12-08 14:37:13
