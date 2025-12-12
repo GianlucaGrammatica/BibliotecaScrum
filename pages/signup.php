@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             // controllo duplicate username/email
-            $chk = $pdo->prepare("SELECT 1 FROM utente WHERE username = ? OR email = ? LIMIT 1");
+            $chk = $pdo->prepare("SELECT 1 FROM utenti WHERE username = ? OR email = ? LIMIT 1");
             $chk->execute([$username, $email]);
             if ($chk->fetch()) {
                 throw new Exception("Username o email già in uso.");
