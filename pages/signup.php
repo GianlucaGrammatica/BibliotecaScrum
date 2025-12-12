@@ -82,9 +82,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $mail->addAddress($email, $nome . ' ' . $cognome);
             $mail->isHTML(true);
             $mail->Subject = 'Conferma la tua email';
-            $mail->Body = "<p>Ciao " . htmlspecialchars($nome) . ",</p>
-                           <p>Clicca questo link per confermare la tua email:</p>
-                           <p><a href=\"" . htmlspecialchars($verifyLink) . "\">Conferma email</a></p>";
+            $mail->Body = $mail->Body = "<p>Ciao " . htmlspecialchars($row['nome']) . ",</p>
+                               <p>Clicca questo link per confermare la tua email:</p>
+                               <p><a href=\"" . htmlspecialchars($verifyLink) . "\">Conferma email</a></p>
+                               <br>
+                               <p>Inviato da: Biblioteca Scrum Itis Rossi</p>
+                               <p><a href='https://unexploratory-franchesca-lipochromic.ngrok-free.dev/verifica'>Biblioteca Itis Rossi</a></p>";
             $mail->send();
 
             $success_msg = "Registrazione riuscita! Ti abbiamo inviato una mail di conferma.";
