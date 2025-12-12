@@ -1,17 +1,21 @@
 <?php
 $whitelist = [
-    '/'        => 'pages/index.php',             // home page
-    '/home'        => 'pages/index.php',         // home page
-    '/webhook' => 'webhook.php',                 // Webhook pull server (local server)
-    '/login' => 'pages/login.php',
+    '/'        => 'pages/index.php',
+    '/home'    => 'pages/index.php',
+    '/webhook' => 'webhook.php',
+    '/login'   => 'pages/login.php',
     '/confirm-email' => 'pages/confirmemail.php',
-    '/signup' => 'pages/signup.php',
-    '/logout' => 'pages/logout.php',
+    '/signup'  => 'pages/signup.php',
+    '/logout'  => 'pages/logout.php',
     '/protected' => 'pages/protected.php',
     './contatti' => 'pages/contatti.php',
-    './privacy' => 'pages/privacy.php',
-    './terms' => 'pages/terms.php',
+    './privacy'   => 'pages/privacy.php',
+    './terms'     => 'pages/terms.php',
+    './info_libro'=> 'pages/info_libro.php',
+    '/libro_info' => 'pages/libro_info.php',
+    '/libro_info.php' => 'pages/libro_info.php',
 ];
+
 
 
 // LOGICA ROUTER
