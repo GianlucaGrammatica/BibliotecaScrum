@@ -8,56 +8,43 @@ if (isset($_SESSION['logged']) && $_SESSION['logged'] === true) {
 }
 
 $error_msg = ""; 
+$user_input = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user_input = trim($_POST['username'] ?? '');
     $pass_input = trim($_POST['password'] ?? '');
 
-    if (isset($pdo)) {
+    if (!$user_input || !$pass_input) {
+        $error_msg = "Compila tutti i campi.";
+    } elseif (!isset($pdo)) {
+        $error_msg = "Errore di connessione al database.";
+    } else {
         try {
-            $password_hash = hash('sha256', $pass_input); 
+            // Recupero utente dal DB
+            $stmt = $pdo->prepare("SELECT password_hash, codice_alfanumerico FROM utenti WHERE username = ? OR email = ? LIMIT 1");
+            $stmt->execute([$user_input, $user_input]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            $stmt = $pdo->prepare("CALL CheckLoginUser(?, ?, @risultato)");
-            
-            $stmt->bindParam(1, $user_input, PDO::PARAM_STR);
-            $stmt->bindParam(2, $password_hash, PDO::PARAM_STR); 
-            $stmt->execute();
-            
-            $stmt->closeCursor();
-
-            $row = $pdo->query("SELECT @risultato as esito")->fetch(PDO::FETCH_ASSOC);
-            $esito = $row['esito'];
-
-            if ($esito === 'utente_non_trovato') {
+            if (!$row) {
                 $error_msg = "Utente non trovato.";
-            } 
-            elseif ($esito === 'password_sbagliata') {
+            } elseif (!password_verify($pass_input, $row['password_hash'])) {
                 $error_msg = "Password errata.";
-            } 
-            elseif ($esito === 'blocked:1') {
-                $error_msg = "Il tuo account è stato bloccato da un amministratore.";
-            } 
-            elseif ($esito === 'blocked:2') {
-                $error_msg = "Troppi tentativi falliti. Riprova tra 15 minuti.";
-            } 
-            else {
-                session_regenerate_id(true); 
-                
+            } else {
+                // Login riuscito
+                session_regenerate_id(true);
                 $_SESSION['logged'] = true;
-                $_SESSION['codice_utente'] = $esito; 
-                $_SESSION['username'] = $user_input; 
-                
+                $_SESSION['codice_utente'] = $row['codice_alfanumerico'];
+                $_SESSION['username'] = $user_input;
+
                 setcookie('auth', 'ok', time() + 604800, '/', '', false, true);
-                
-                header("Location: ./"); 
+
+                header("Location: ./");
                 exit;
             }
 
         } catch (PDOException $e) {
             $error_msg = "Errore di sistema: " . $e->getMessage();
         }
-    } else {
-        $error_msg = "Errore di connessione al Database.";
     }
 }
 ?>
