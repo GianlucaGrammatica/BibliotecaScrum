@@ -76,85 +76,82 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <!DOCTYPE html>
 <html lang="it">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Registrazione</title>
+    </head>
+    <body>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrazione</title>
-</head>
+        <?php require_once './src/includes/header.php'; ?>
+        <?php require_once './src/includes/navbar.php'; ?>
 
-<body>
+        <div class="container">
 
-    <?php require_once './src/includes/header.php'; ?>
-    <?php require_once './src/includes/navbar.php'; ?>
+            <?php if (!empty($error_msg)): ?>
+                <div class="error"><?php echo htmlspecialchars($error_msg); ?></div>
+            <?php endif; ?>
 
-    <div class="container">
+            <h2>Registrati<?php echo $tipologia ?></h2>
+            <form method="post">
 
-        <?php if (!empty($error_msg)): ?>
-            <div class="error"><?php echo htmlspecialchars($error_msg); ?></div>
-        <?php endif; ?>
+                <label for="username">Username:</label>
+                <input placeholder="Username" required type="text" id="username" name="username">
 
-        <h2>Registrati<?php echo $tipologia ?></h2>
-        <form method="post">
+                <label for="nome">Nome:</label>
+                <input placeholder="Nome" required type="text" id="nome" name="nome">
 
-            <label for="username">Username:</label>
-            <input placeholder="Username" required type="text" id="username" name="username">
+                <label for="cognome">Cognome:</label>
+                <input placeholder="Cognome" required type="text" id="cognome" name="cognome">
 
-            <label for="nome">Nome:</label>
-            <input placeholder="Nome" required type="text" id="nome" name="nome">
+                <?php if ($registratiConCodice) { ?>
+                    <label for="codice_fiscale">Codice Fiscale:</label>
+                    <input placeholder="Codice Fiscale" required type="text" id="codice_fiscale" name="codice_fiscale">
+                <?php } else { ?>
+                    <label for="comune_nascita">Comune di Nascita:</label>
+                    <input placeholder="Comune di Nascita" required type="text" id="comune_nascita" name="comune_nascita">
+                    <label for="data_nascita">Data di Nascita:</label>
+                    <input placeholder="Data di Nascita" required type="date" id="data_nascita" name="data_nascita">
+                    <label for="sesso">Sesso:</label>
+                    <select required name="sesso" id="sesso">
+                        <option value="">--Sesso--</option>
+                        <optgroup label="Preferenze">
+                            <option value="M">Maschio</option>
+                            <option value="F">Femmina</option>
+                        </optgroup>
+                    </select>
 
-            <label for="cognome">Cognome:</label>
-            <input placeholder="Cognome" required type="text" id="cognome" name="cognome">
-
+                <?php } ?>
+                <label for="email">Email:</label>
+                <input placeholder="Email" required type="email" id="email" name="email">
+                <label for="password">Password:</label>
+                <input required type="password" id="password" name="password">
+                <input placeholder="Password" type="submit" value="Registrami">
+            </form>
             <?php if ($registratiConCodice) { ?>
-                <label for="codice_fiscale">Codice Fiscale:</label>
-                <input placeholder="Codice Fiscale" required type="text" id="codice_fiscale" name="codice_fiscale">
+                <a href="#" onclick='redirectConCodice(false)'>Non hai il codice fiscale?</a>
             <?php } else { ?>
-                <label for="comune_nascita">Comune di Nascita:</label>
-                <input placeholder="Comune di Nascita" required type="text" id="comune_nascita" name="comune_nascita">
-                <label for="data_nascita">Data di Nascita:</label>
-                <input placeholder="Data di Nascita" required type="date" id="data_nascita" name="data_nascita">
-                <label for="sesso">Sesso:</label>
-                <select required name="sesso" id="sesso">
-                    <option value="">--Sesso--</option>
-                    <optgroup label="Preferenze">
-                        <option value="M">Maschio</option>
-                        <option value="F">Femmina</option>
-                    </optgroup>
-                </select>
-
+                <a href="#" onclick='redirectConCodice(true)'>Hai il codice fiscale?</a>
             <?php } ?>
-            <label for="email">Email:</label>
-            <input placeholder="Email" required type="email" id="email" name="email">
-            <label for="password">Password:</label>
-            <input required type="password" id="password" name="password">
-            <input placeholder="Password" type="submit" value="Registrami">
-        </form>
-        <?php if ($registratiConCodice) { ?>
-            <a href="#" onclick='redirectConCodice(false)'>Non hai il codice fiscale?</a>
-        <?php } else { ?>
-            <a href="#" onclick='redirectConCodice(true)'>Hai il codice fiscale?</a>
-        <?php } ?>
 
-    </div>
+        </div>
 
-    <?php require_once "./src/includes/footer.php" ?>
+        <?php require_once "./src/includes/footer.php" ?>
 
-    <script>
-        const redirectConCodice = (conCodice) => {
-            const virtual_form = document.createElement("form");
-            virtual_form.style.display = "none"
-            virtual_form.method = "POST";
-            virtual_form.action = "./signup"
-            const decision = document.createElement("input");
-            decision.name = "conCodiceFiscale";
-            decision.type = "hidden";
-            decision.value = conCodice;
-            virtual_form.appendChild(decision)
-            document.body.appendChild(virtual_form);
-            virtual_form.submit();
-        }
-    </script>
-</body>
-
+        <script>
+            const redirectConCodice = (conCodice) => {
+                const virtual_form = document.createElement("form");
+                virtual_form.style.display = "none"
+                virtual_form.method = "POST";
+                virtual_form.action = "./signup"
+                const decision = document.createElement("input");
+                decision.name = "conCodiceFiscale";
+                decision.type = "hidden";
+                decision.value = conCodice;
+                virtual_form.appendChild(decision)
+                document.body.appendChild(virtual_form);
+                virtual_form.submit();
+            }
+        </script>
+    </body>
 </html>
