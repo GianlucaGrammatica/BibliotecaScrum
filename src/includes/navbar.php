@@ -35,7 +35,8 @@ if (isset($_SESSION['nome_utente'])) {
                 <button type="submit" class="search_icon_button">
                     <img src="./public/assets/icon_search_dark.png" alt="Cerca" class="navbar_search_icon">
                 </button>
-                <input type="text" placeholder="Search.." name="search" class="navbar_search_input instrument-sans-semibold">
+                <input type="text" placeholder="Search.." name="search" class="navbar_search_input instrument-sans-semibold"
+                       value="<?= isset($_GET['search']) ? $_GET['search']: '' ?>">
             </form>
         </div>
     </div>
