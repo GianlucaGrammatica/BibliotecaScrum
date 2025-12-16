@@ -17,6 +17,7 @@ $whitelist = [
     '/dashboard-utenti' => 'pages/admin/D_utenti.php',
     '/search' => 'pages/search.php',
     '/password-reset'=> 'pages/passwreset.php',
+    '/verifica'=> 'pages/verifica.php',
 
     //temp
     '/cover-fetcher'=> 'coverFetcher.php',

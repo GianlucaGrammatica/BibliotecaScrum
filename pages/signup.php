@@ -99,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                <p><a href=\"" . htmlspecialchars($verifyLink) . "\">Conferma email</a></p>
                                <br>
                                <p>Inviato da: Biblioteca Scrum Itis Rossi</p>
-                               <p><a href='https://unexploratory-franchesca-lipochromic.ngrok-free.dev/verifica'>Biblioteca Itis Rossi</a></p>";
+                               <p><a href='https://unexploratory-franchesca-lipochromic.ngrok-free.dev/'>Biblioteca Itis Rossi</a></p>";
             $mail->send();
 
             $success_msg = "Registrazione riuscita! Ti abbiamo inviato una mail di conferma.";

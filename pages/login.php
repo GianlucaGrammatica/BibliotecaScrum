@@ -22,8 +22,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         try {
             // Recupero utente dal DB
-            $stmt = $pdo->prepare("SELECT password_hash, codice_alfanumerico, email_confermata, nome, cognome, email FROM utenti WHERE username = ? OR email = ? LIMIT 1");
-            $stmt->execute([$user_input, $user_input]);
+            $stmt = $pdo->prepare("SELECT password_hash, codice_alfanumerico, email_confermata, nome, cognome, email FROM utenti WHERE  username = ? OR email = ? OR codice_fiscale = ? LIMIT 1");
+            $stmt->execute([$user_input, $user_input, $user_input]);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if (!$row) {
@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                <p><a href=\"" . htmlspecialchars($verifyLink) . "\">Conferma email</a></p>
                                <br>
                                <p>Inviato da: Biblioteca Scrum Itis Rossi</p>
-                               <p><a href='https://unexploratory-franchesca-lipochromic.ngrok-free.dev/verifica'>Biblioteca Itis Rossi</a></p>";
+                               <p><a href='https://unexploratory-franchesca-lipochromic.ngrok-free.dev/'>Biblioteca Itis Rossi</a></p>";
                 $mail->send();
 
                 $error_msg = "Conferma l'email prima di accedere. Ti è stato inviato un nuovo codice!";
