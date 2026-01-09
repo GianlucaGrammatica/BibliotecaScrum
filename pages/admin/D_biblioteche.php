@@ -97,7 +97,8 @@ if (isset($pdo)) {
 ?>
 
 
-<?php require_once './src/includes/header.php'; ?>
+<?php  $path = "../";
+require_once './src/includes/header.php'; ?>
 <?php require_once './src/includes/navbar.php'; ?>
 
 <!-- INIZIO DEL BODY -->
