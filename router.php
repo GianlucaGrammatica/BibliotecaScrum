@@ -1,7 +1,7 @@
 <?php
 $whitelist = [
-    '/'        => 'pages/index.php',             // home page
-    '/home'        => 'pages/index.php',         // home page
+    '/'        => 'pages/index.php',
+    '/home'        => 'pages/index.php',
     '/webhook' => 'webhook.php',                 // Webhook pull server (local server)
     '/login' => 'pages/login.php',
     '/confirm-email' => 'pages/confirmemail.php',
@@ -11,10 +11,22 @@ $whitelist = [
     '/contatti' => 'pages/contatti.php',
     './privacy' => 'pages/privacy.php',
     './terms' => 'pages/terms.php',
-    '/dashboard' => 'pages/admin/dashboard.php',
+    '/dashboard' => 'pages/dashboard.php',
     '/dashboard-biblioteche' => 'pages/admin/D_biblioteche.php',
     '/dashboard-libri' => 'pages/admin/D_libri.php',
     '/dashboard-utenti' => 'pages/admin/D_utenti.php',
+    '/search' => 'pages/search.php',
+    '/password-reset'=> 'pages/passwreset.php',
+    '/verifica'=> 'pages/verifica.php',
+    '/libro'=> 'pages/libro.php',
+    '/profilo' => 'pages/profilo.php',
+
+    //admin
+    '/admin/dashboard-biblioteche' => 'pages/admin/D_biblioteche.php',
+    '/admin/dashboard-libri' => 'pages/admin/D_libri.php',
+    '/admin/dashboard-utenti' => 'pages/admin/D_utenti.php',
+    //temp
+    '/cover-fetcher'=> 'coverFetcher.php',
 ];
 
 

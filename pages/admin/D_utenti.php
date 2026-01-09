@@ -1,5 +1,12 @@
 <?php
-session_start();
+
+require_once 'security.php';
+if (!checkAccess('amministratore')) header('Location: ./');
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 require_once 'db_config.php';
 require_once './src/includes/codiceFiscaleMethods.php';
 
@@ -163,7 +170,8 @@ try {
 
 
 
-<?php require_once './src/includes/header.php'; ?>
+<?php $path = "../";
+require_once './src/includes/header.php'; ?>
 <?php require_once './src/includes/navbar.php'; ?>
 
 <!-- INIZIO DEL BODY -->
