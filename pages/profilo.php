@@ -4,6 +4,13 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 ini_set('error_log', '/var/www/html/php_errors.log');
 
+// Include Composer's autoloader
+require_once __DIR__ . '/../vendor/autoload.php';
+
+// Import the necessary class
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -78,6 +85,38 @@ if (isset($_POST['ajax_send_email_code']) && $uid) {
 
 $messaggio_alert = ""; // Variabile per messaggio finale PHP
 
+if (isset($_POST['submit_pfp']) && isset($_FILES['pfp_upload'])) {
+    if ($_FILES['pfp_upload']['error'] === UPLOAD_ERR_OK) {
+        $file = $_FILES['pfp_upload'];
+        
+        try {
+            // Create an image manager instance with GD driver
+            $manager = new ImageManager(new Driver());
+
+            // Read the uploaded image
+            $image = $manager->read($file['tmp_name']);
+
+            // Define the destination path
+            $pfpDir = 'public/pfp';
+            if (!is_dir($pfpDir)) {
+                mkdir($pfpDir, 0755, true);
+            }
+            $destination = $pfpDir . '/' . $uid . '.png';
+
+            // Encode the image to PNG format and save it
+            $image->toPng()->save($destination);
+
+            $messaggio_alert = "Immagine del profilo aggiornata!";
+
+        } catch (Exception $e) {
+            $messaggio_alert = "Errore: " . $e->getMessage();
+        }
+
+    } else {
+        $messaggio_alert = "Errore durante il caricamento del file.";
+    }
+}
+
 if (!$uid) {
     header("Location: ./login");
     exit;
@@ -147,14 +186,62 @@ function getCoverPath(string $isbn): string {
         display: flex; flex-direction: column; width: auto; justify-content: flex-start; align-items: center; gap: 10px; 
     }
     .info_line { display: flex; flex-direction: row; width: 100%; justify-content: space-between; align-items: flex-start; gap: 20px; padding-top: 20px; }
-    .info_pfp { border-radius: 100%; width: 240px; height: 240px; padding: 5px; border: solid 5px #3f5135; object-fit: cover; }
+    
+    /* --- NUOVO CSS PFP --- */
+    .pfp-wrapper {
+        position: relative;
+        width: 240px;
+        height: 240px;
+        border-radius: 50%;
+        border: 5px solid #3f5135;
+        overflow: hidden;
+        cursor: pointer;
+        margin-bottom: 15px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+    .info_pfp { 
+        width: 100%; 
+        height: 100%; 
+        object-fit: cover; 
+        display: block;
+    }
+    .pfp-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        color: #fff;
+        font-family: 'Poppins', sans-serif;
+    }
+    .pfp-wrapper:hover .pfp-overlay {
+        opacity: 1;
+    }
+    .pfp-icon {
+        font-size: 24px;
+        margin-bottom: 5px;
+    }
+    .pfp-text {
+        font-size: 14px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
     .extend_all { width: 100%; height: 100%; justify-content: space-between; align-items: flex-start; }
     .section { width: 100%; height: auto; display: flex; flex-direction: column; .grid { width: 100%; padding: 5px; } }
 
     /* --- CSS EDITING E ANIMAZIONI --- */
     
     .edit-container-wrapper {
-        margin-top: 20px; 
+        margin-top: 10px; 
         width: 260px; /* Larghezza FISSA */
         display: flex; 
         flex-direction: column; 
@@ -293,8 +380,25 @@ function getCoverPath(string $isbn): string {
 
     <div class="info_column">
 
-        <img class="info_pfp" alt="Pfp" src="<?= htmlspecialchars($utente['icona'] ?? 'public/assets/base_pfp.png') ?>">
+        <?php
+        $pfpPath = 'public/pfp/' . htmlspecialchars($uid) . '.png';
+        if (!file_exists($pfpPath)) {
+            $pfpPath = 'public/assets/base_pfp.png';
+        }
+        ?>
         
+        <form action="profilo" method="post" enctype="multipart/form-data" id="form-pfp">
+            <input type="hidden" name="submit_pfp" value="1">
+            <input type="file" name="pfp_upload" id="pfp_upload" accept="image/png, image/jpeg" style="display: none;" onchange="document.getElementById('form-pfp').submit()">
+
+            <div class="pfp-wrapper" onclick="document.getElementById('pfp_upload').click()">
+                <img class="info_pfp" alt="Pfp" src="<?= $pfpPath . '?v=' . time() ?>">
+                <div class="pfp-overlay">
+                    <span class="pfp-icon">📷</span>
+                    <span class="pfp-text">Modifica</span>
+                </div>
+            </div>
+        </form>
         <button class="btn-tessera" onclick="apriTessera()">Tessera Utente</button>
 
         <div class="edit-container-wrapper">
