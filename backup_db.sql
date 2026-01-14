@@ -779,7 +779,7 @@ CREATE TABLE `prestiti` (
   KEY `id_copia` (`id_copia`),
   CONSTRAINT `prestiti_ibfk_1` FOREIGN KEY (`codice_alfanumerico`) REFERENCES `utenti` (`codice_alfanumerico`),
   CONSTRAINT `prestiti_ibfk_2` FOREIGN KEY (`id_copia`) REFERENCES `copie` (`id_copia`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -791,10 +791,24 @@ LOCK TABLES `prestiti` WRITE;
 INSERT INTO `prestiti` VALUES
 (1,'00000C',3,'2026-01-09','2026-02-08','2026-01-09',0),
 (2,'00000C',3,'2026-01-09','2026-02-08','2026-01-09',0),
-(3,'00000C',21,'2026-01-09','2026-02-08',NULL,0),
-(4,'00000B',48,'2026-01-09','2026-02-08',NULL,0),
-(5,'000006',89,'2026-01-09','2026-02-08',NULL,0),
-(6,'00000C',11,'2026-01-09','2026-02-08',NULL,0);
+(3,'00000C',21,'2026-01-09','2026-02-08','2026-01-10',0),
+(4,'00000B',48,'2026-01-09','2026-02-08','2026-01-10',0),
+(5,'000006',89,'2026-01-09','2026-02-08','2026-01-10',0),
+(6,'00000C',11,'2026-01-09','2026-02-08','2026-01-10',0),
+(8,'000006',55,'2026-01-10','2026-02-09','2026-01-10',0),
+(10,'000006',38,'2026-01-10','2026-02-09','2026-01-10',0),
+(12,'000006',88,'2026-01-10','2026-02-09','2026-01-10',0),
+(13,'000006',88,'2026-01-10','2026-02-09','2026-01-10',0),
+(14,'000003',55,'2026-01-10','2026-02-09','2026-01-10',0),
+(15,'000003',55,'2026-01-10','2026-02-09','2026-01-10',0),
+(16,'000006',88,'2026-01-10','2026-02-09','2026-01-10',0),
+(17,'000004',11,'2026-01-10','2026-02-09','2026-01-10',0),
+(18,'000004',88,'2026-01-10','2026-02-09','2026-01-10',0),
+(19,'000004',88,'2026-01-10','2026-01-09',NULL,0),
+(20,'000006',67,'2026-01-10','2026-02-09',NULL,0),
+(21,'00000C',40,'2026-01-10','2026-02-09','2026-01-10',0),
+(22,'00000C',55,'2026-01-10','2026-02-09','2026-01-10',0),
+(23,'00000C',39,'2026-01-10','2026-02-09',NULL,0);
 /*!40000 ALTER TABLE `prestiti` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -819,7 +833,7 @@ CREATE TABLE `recensioni` (
   KEY `codice_alfanumerico` (`codice_alfanumerico`),
   CONSTRAINT `recensioni_ibfk_1` FOREIGN KEY (`isbn`) REFERENCES `libri` (`isbn`),
   CONSTRAINT `recensioni_ibfk_2` FOREIGN KEY (`codice_alfanumerico`) REFERENCES `utenti` (`codice_alfanumerico`)
-) ENGINE=InnoDB AUTO_INCREMENT=449 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=452 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1016,7 +1030,10 @@ INSERT INTO `recensioni` VALUES
 (445,9788834734364,'000007',4,'Il mercerismo è un concetto affascinante.','2025-12-14',0,0),
 (446,9788834742215,'00000C',2,'Bello','2026-01-09',0,0),
 (447,9788804711951,'00000C',3,'S','2026-01-09',0,0),
-(448,9788804702027,'00000C',5,'Bello','2026-01-09',0,0);
+(448,9788804702027,'00000C',5,'Bello','2026-01-10',0,0),
+(449,9788845292613,'00000C',4,'nofbfdbherf','2026-01-10',0,0),
+(450,9788804616898,'00000C',4,'dwada','2026-01-10',0,0),
+(451,9788804702027,'00000D',4,'Sborro','2026-01-10',0,0);
 /*!40000 ALTER TABLE `recensioni` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1056,7 +1073,10 @@ INSERT INTO `ruoli` VALUES
 ('000009',1,0,0,0),
 ('00000A',0,1,0,0),
 ('00000B',0,0,1,0),
-('00000C',0,0,0,1);
+('00000C',0,0,0,1),
+('00000D',1,0,0,0),
+('00000E',1,0,0,0),
+('00000F',1,0,0,0);
 /*!40000 ALTER TABLE `ruoli` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1075,7 +1095,7 @@ CREATE TABLE `tokenemail` (
   PRIMARY KEY (`id`),
   KEY `token` (`token`),
   KEY `codice_alfanumerico` (`codice_alfanumerico`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1095,7 +1115,10 @@ INSERT INTO `tokenemail` VALUES
 (10,'000001','e727f5b3a8641b3702cdebe02ad70f5999559495d53e1d6875c2bcda40619c8f','2025-12-13 10:12:26'),
 (11,'000008','1b79aa7784c7128145f48fa07e3d5459c32f3f00fc1887ec6212d9f8a214c53d','2025-12-14 20:10:30'),
 (13,'000008','6b6243d55fd5466383b375d75c14315ff1360a9dcd4df4a7f6b8a36b1891baf7','2025-12-16 15:21:53'),
-(14,'000008','f9906e411b89e37529fd2719c779ef521009c326f0d0229f4241be02e0a32fa4','2025-12-16 15:23:35');
+(14,'000008','f9906e411b89e37529fd2719c779ef521009c326f0d0229f4241be02e0a32fa4','2025-12-16 15:23:35'),
+(18,'00000E','a426efa7547445dc67948c878e15e3fe2d66de7626d6218c15cba0757cb4d1e5','2026-01-12 14:09:49'),
+(19,'00000E','d3ca78da7be64e277d001eb875fdd11085755ba664fd7c973e3cde92262ffe64','2026-01-12 14:10:16'),
+(20,'00000F','2d5b7a253ee18f2557f1f57469d8f607f523eb6002782cbee7dbde73f599e260','2026-01-13 10:04:31');
 /*!40000 ALTER TABLE `tokenemail` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1171,7 +1194,10 @@ INSERT INTO `utenti` VALUES
 ('000009','StudenteProva','Studente','Prova','RSSMRA85T10A562S','studente.prova@example.com','$2y$10$Th5mE4AGgEpZnMd34rG0quP0yvwg1etVtGS2vh.bb/7WHBj3UEpxC',0,0,0,0,1,'2025-12-17'),
 ('00000A','DocenteProva','Docente','Prova','BNCLRN80A01H501U','docente.prova@example.com','$2y$10$iaWHpX4iHgrXeTjxBDKjZOSI7SCTFaG3fRiWoofRIXMOvowyBYKX.',0,0,0,0,1,'2025-12-17'),
 ('00000B','BibliotecarioProva','Bibliotecario','Prova','PLCNDR75B12C345D','bibliotecario.prova@example.com','$2y$10$Dvprn8Xd8io3QsQT3iGuJu9KJ0QZmv/o8iYnpf4WoWn1b.bNH6brC',0,0,0,0,1,'2025-12-17'),
-('00000C','AdminProva','Amministratore','Prova','VRDNRD70D22F789G','admin.prova@example.com','$2y$10$sT/MMNj60JJowywNPuOA8OqIgqUWvQrTFlOrlIu/20UCbgUeJaPlq',0,0,0,0,1,'2025-12-17');
+('00000C','AdminProva','Amministratore','Prova','VRDNRD70D22F789G','admin.prova@example.com','$2y$10$sT/MMNj60JJowywNPuOA8OqIgqUWvQrTFlOrlIu/20UCbgUeJaPlq',0,0,0,0,1,'2025-12-17'),
+('00000D','Porcoddio','Por','Codio','CDOPRO51D50L157M','khevinkharai@gmail.com','$2y$10$yOVeoYN52PkJ7mrnGono8.EAmhucZArCF8GXlq8wm47H43Kf0kIu.',0,0,0,0,1,'2026-01-10'),
+('00000E','HackerNero','Maurizio','Costanzo','CSTMRZ85L03L840W','tuanonna@gmail.com','$2y$10$7OgQ3SfpWC.N16FhzVzM1O9TWjHVTc/fR19OkLVAywxHXpT.gshda',0,0,0,0,0,'2026-01-12'),
+('00000F','HackerNer0','Hacker','Ner0','NREHKR09B11G302X','10934123@itisrossi.vi.it','$2y$10$qfQb3wzldzOb7LNxX55uh.4eZ9Og0VpH4Yir5Jz/m6F2WOX3cIttW',0,0,0,0,0,'2026-01-13');
 /*!40000 ALTER TABLE `utenti` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1332,4 +1358,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-01-10  2:00:03
+-- Dump completed on 2026-01-14  2:00:03
