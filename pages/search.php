@@ -5,7 +5,8 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-function highlight_text(?string $text, string $search): string {
+function highlight_text(?string $text, string $search): string
+{
     if ($text === null) return '';
     if ($search === '') return $text;
     return preg_replace('/' . preg_quote($search, '/') . '/iu', '<mark>$0</mark>', $text);
@@ -69,43 +70,56 @@ if (!empty($search_query)) {
 
 <?php
 $title = "Ricerca - " . $_GET['search'];
-    $path = "./";
-    require_once './src/includes/header.php';
-    require_once './src/includes/navbar.php';
+$path = "./";
+$page_css = "./public/css/style_search.css";
+require_once './src/includes/header.php';
+require_once './src/includes/navbar.php';
 ?>
 
 <div class="page_contents">
 
-    <h2>🔎 Filtri di Ricerca</h2>
+    <div class="search_section_con instrument-sans">
+        <div class="search_section_form">
+            <div class="search_section_form_left">
+                <img src="<?= $path ?>public/assets/icon_search_dark.png" class="search_section_form_icon" alt="">
+                <h2>Filtri di Ricerca</h2>
+            </div>
 
-    <!-- Pulsanti per selezionare la sezione da visualizzare -->
-    <div style="margin-bottom:15px;">
-        <button type="button" id="btn_books" class="section_btn active">Libri</button>
-        <button type="button" id="btn_users" class="section_btn">Utenti</button>
+            <!-- Pulsanti per selezionare la sezione da visualizzare -->
+            <div class="search_buttons_container">
+                <button type="button" id="btn_books" class="section_btn active general_button_dark">Libri</button>
+                <button type="button" id="btn_users" class="section_btn general_button_dark">Utenti</button>
+            </div>
+        </div>
+
+        <div class="search_section_form">
+
+            <!-- Form filtri -->
+            <form id="filter_form">
+                <div id="filters_books">
+                    <h3>Libri</h3>
+                    <label><input type="checkbox" name="filtra_titolo" checked> Titolo libro</label><br>
+                    <label><input type="checkbox" name="filtra_autore_nome" checked> Nome autore</label><br>
+                    <label><input type="checkbox" name="filtra_autore_cognome" checked> Cognome autore</label><br>
+                </div>
+                <div id="filters_users" style="display:none;">
+                    <h3>Utenti</h3>
+                    <label><input type="checkbox" name="filtra_username" checked> Username utente</label><br>
+                    <label><input type="checkbox" name="filtra_user_nome" checked> Nome utente</label><br>
+                    <label><input type="checkbox" name="filtra_user_cognome" checked> Cognome utente</label>
+                </div>
+            </form>
+        </div>
     </div>
 
-    <!-- Form filtri -->
-    <form id="filter_form">
-        <div id="filters_books">
-            <h3>Libri</h3>
-            <label><input type="checkbox" name="filtra_titolo" checked> Titolo libro</label><br>
-            <label><input type="checkbox" name="filtra_autore_nome" checked> Nome autore</label><br>
-            <label><input type="checkbox" name="filtra_autore_cognome" checked> Cognome autore</label><br>
-        </div>
-        <div id="filters_users" style="display:none;">
-            <h3>Utenti</h3>
-            <label><input type="checkbox" name="filtra_username" checked> Username utente</label><br>
-            <label><input type="checkbox" name="filtra_user_nome" checked> Nome utente</label><br>
-            <label><input type="checkbox" name="filtra_user_cognome" checked> Cognome utente</label>
-        </div>
-    </form>
 
-    <hr>
+    <hr class="section_divider">
 
     <!-- SEZIONE LIBRI -->
-    <div id="section_books">
+    <div id="section_books" class="instrument-sans">
         <h1>Risultati Libri</h1>
-        <p>Trovati <strong id="results_count_books"><?= count($books) ?></strong> libri per <strong><?= $search_query ?></strong></p>
+        <p>Trovati <strong id="results_count_books"><?= count($books) ?></strong> libri per
+            <strong><?= $search_query ?></strong></p>
         <div id="results_container_books">
             <?php foreach ($books as $isbn => $book): ?>
                 <div class="book_card"
@@ -113,11 +127,14 @@ $title = "Ricerca - " . $_GET['search'];
                      data-autore_nome="<?= $book['autore_nome'] ?>"
                      data-autore_cognome="<?= $book['autore_cognome'] ?>"
                      style="margin-bottom:10px; display:flex; align-items:center;">
-                    <img src="public/bookCover<?= $book['isbn'] ?? 'src/assets/placeholder' ?>.jpg" alt="Copertina" style="width:50px;height:70px;margin-right:10px;">
+                    <img src="public/bookCover<?= $book['isbn'] ?? 'src/assets/placeholder' ?>.jpg" alt="Copertina"
+                         style="width:50px;height:70px;margin-right:10px;">
                     <div>
                         <h3 class="book_titolo"><?= highlight_text($book['titolo'], $search_query) ?></h3>
-                        <p class="book_autore_nome"><strong>Nome autore:</strong> <?= highlight_text($book['autore_nome'], $search_query) ?></p>
-                        <p class="book_autore_cognome"><strong>Cognome autore:</strong> <?= highlight_text($book['autore_cognome'], $search_query) ?></p>
+                        <p class="book_autore_nome"><strong>Nome
+                                autore:</strong> <?= highlight_text($book['autore_nome'], $search_query) ?></p>
+                        <p class="book_autore_cognome"><strong>Cognome
+                                autore:</strong> <?= highlight_text($book['autore_cognome'], $search_query) ?></p>
                         <a href="./libro?isbn=<?= urlencode($isbn) ?>">Dettagli</a>
                     </div>
                 </div>
@@ -127,17 +144,21 @@ $title = "Ricerca - " . $_GET['search'];
         <hr>
 
         <h2>Risultati Autori</h2>
-        <p>Trovati <strong id="results_count_authors"><?= count($authors) ?></strong> autori per <strong><?= $search_query ?></strong></p>
+        <p>Trovati <strong id="results_count_authors"><?= count($authors) ?></strong> autori per
+            <strong><?= $search_query ?></strong></p>
         <div id="results_container_authors">
             <?php foreach ($authors as $isbn => $book): ?>
                 <div class="author_card"
                      data-autore_nome="<?= $book['autore_nome'] ?>"
                      data-autore_cognome="<?= $book['autore_cognome'] ?>"
                      style="margin-bottom:10px; display:flex; align-items:center;">
-                    <img src="public/bookCover<?= $book['isbn'] ?? 'src/assets/placeholder' ?>.jpg" alt="Copertina" style="width:50px;height:70px;margin-right:10px;">
+                    <img src="public/bookCover<?= $book['isbn'] ?? 'src/assets/placeholder' ?>.jpg" alt="Copertina"
+                         style="width:50px;height:70px;margin-right:10px;">
                     <div>
-                        <p class="author_nome"><strong>Nome autore:</strong> <?= highlight_text($book['autore_nome'], $search_query) ?></p>
-                        <p class="author_cognome"><strong>Cognome autore:</strong> <?= highlight_text($book['autore_cognome'], $search_query) ?></p>
+                        <p class="author_nome"><strong>Nome
+                                autore:</strong> <?= highlight_text($book['autore_nome'], $search_query) ?></p>
+                        <p class="author_cognome"><strong>Cognome
+                                autore:</strong> <?= highlight_text($book['autore_cognome'], $search_query) ?></p>
                         <p><strong>Libro:</strong> <?= $book['titolo'] ?></p>
                         <a href="./libro?isbn=<?= urlencode($isbn) ?>">Dettagli</a>
                     </div>
@@ -149,7 +170,8 @@ $title = "Ricerca - " . $_GET['search'];
     <!-- SEZIONE UTENTI -->
     <div id="section_users" style="display:none;">
         <h1>Risultati Utenti</h1>
-        <p>Trovati <strong id="results_count_users"><?= count($users) ?></strong> utenti per <strong><?= $search_query ?></strong></p>
+        <p>Trovati <strong id="results_count_users"><?= count($users) ?></strong> utenti per
+            <strong><?= $search_query ?></strong></p>
         <div id="results_container_users">
             <?php foreach ($users as $user): ?>
                 <div class="user_card"
@@ -157,9 +179,12 @@ $title = "Ricerca - " . $_GET['search'];
                      data-user_nome="<?= $user['nome'] ?>"
                      data-user_cognome="<?= $user['cognome'] ?>"
                      style="margin-bottom:10px;">
-                    <p class="user_username"><strong>Username:</strong> <?= highlight_text($user['username'], $search_query) ?></p>
-                    <p class="user_user_nome"><strong>Nome:</strong> <?= highlight_text($user['nome'], $search_query) ?></p>
-                    <p class="user_user_cognome"><strong>Cognome:</strong> <?= highlight_text($user['cognome'], $search_query) ?></p>
+                    <p class="user_username">
+                        <strong>Username:</strong> <?= highlight_text($user['username'], $search_query) ?></p>
+                    <p class="user_user_nome"><strong>Nome:</strong> <?= highlight_text($user['nome'], $search_query) ?>
+                    </p>
+                    <p class="user_user_cognome">
+                        <strong>Cognome:</strong> <?= highlight_text($user['cognome'], $search_query) ?></p>
                     <a href="/profilo?username=<?= urlencode($user['username']) ?>">Visualizza profilo</a>
                 </div>
             <?php endforeach; ?>

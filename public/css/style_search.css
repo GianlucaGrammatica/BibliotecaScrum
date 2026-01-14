@@ -1,0 +1,282 @@
+/* ===============================
+   1. SEZIONE RICERCA (HEADER)
+=============================== */
+.search_section_con {
+    background-color: var(--color_background_ligth); /* Era hardcoded, meglio usare la var */
+    padding: 40px 30px;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 25px;
+    font-size: 2rem;
+    color: var(--color_text_dark_green);
+    box-shadow: 0 4px 6px rgba(63, 81, 53, 0.05); /* Un tocco di shadow soft */
+    border: 1px solid rgba(63, 81, 53, 0.1);
+}
+
+.search_section_form {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+}
+
+.search_section_form_left {
+    display: flex;
+    align-items: center;
+}
+
+.search_section_form_icon {
+    height: 32px;
+    width: auto;
+    margin-right: 15px;
+    object-fit: contain;
+    display: inline-block;
+    opacity: 0.8;
+}
+
+h2 {
+    font-family: "Young Serif", serif;
+    font-size: 1.8rem;
+    color: var(--color_accent_dark);
+}
+
+/* Container dei bottoni (Tab) */
+.search_buttons_container {
+    display: flex;
+    gap: 15px;
+}
+
+/* Stile specifico per i bottoni tab attivi/inattivi */
+.section_btn {
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+}
+
+.section_btn:not(.active) {
+    background-color: transparent;
+    color: var(--color_accent_dark);
+    border: 2px solid var(--color_accent_dark);
+    box-shadow: none;
+}
+
+.section_btn:not(.active):hover {
+    background-color: var(--color_accent_ligth);
+    border-color: var(--color_accent_ligth);
+    color: var(--color_text_dark_green);
+}
+
+/* ===============================
+   2. FILTRI (CHECKBOX)
+=============================== */
+#filter_form {
+    width: 100%;
+    padding-top: 10px;
+    border-top: 1px solid rgba(0,0,0,0.05);
+}
+
+#filter_form h3 {
+    font-family: "Instrument Sans", sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 10px;
+    color: var(--color_accent_medium);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+#filter_form div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
+}
+
+#filter_form label {
+    font-family: "Instrument Sans", sans-serif;
+    font-size: 0.95rem;
+    color: var(--color_text_black);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    background: white;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+#filter_form label:hover {
+    background: var(--color_accent_ligth);
+}
+
+/* Custom Checkbox accent */
+input[type="checkbox"] {
+    accent-color: var(--color_accent_dark);
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+
+/* ===============================
+   3. GRIGLIA DEI RISULTATI
+=============================== */
+#results_container_books,
+#results_container_authors,
+#results_container_users {
+    /* Grid layout per tenere tutto ordinato */
+    display: grid;
+    /* Colonne che si adattano: minimo 300px, altrimenti si espandono */
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    /* Gap gestisce lo spazio, ignoriamo i margin del PHP */
+    gap: 20px;
+    margin-top: 20px;
+    width: 100%;
+    /* Questo assicura che il contenitore abbracci il contenuto */
+    height: auto;
+    align-items: stretch;
+}
+
+/* Titoli delle sezioni */
+#section_books h1, #section_users h1, #section_books h2 {
+    font-family: "Young Serif", serif;
+    color: var(--color_accent_dark);
+    font-size: 2rem;
+    margin-bottom: 10px;
+    margin-top: 30px; /* Un po' più di spazio sopra i titoli */
+    clear: both; /* Scaccia via eventuali elementi fluttuanti */
+}
+
+/* ===============================
+   4. CARD DEI RISULTATI (Book & Author)
+=============================== */
+.book_card, .author_card {
+    background-color: var(--color_background_ligth);
+    border: 1px solid rgba(63, 81, 53, 0.1);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(63, 81, 53, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    /* --- OVERRIDE IMPORTANTE --- */
+    /* Usiamo !important per vincere sugli stili inline del PHP */
+    display: flex !important;
+    flex-direction: row !important; /* Forza orizzontale su desktop */
+    align-items: flex-start !important;
+    margin-bottom: 0 !important; /* Il margine lo gestisce la Grid (gap) */
+    height: auto !important; /* L'altezza si adatta al contenuto */
+    width: auto !important;
+}
+
+.book_card:hover, .author_card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(63, 81, 53, 0.15);
+    background-color: #fff;
+    z-index: 2;
+}
+
+/* Immagine copertina */
+.book_card img, .author_card img {
+    border-radius: 8px;
+    object-fit: cover;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    width: 80px !important;
+    height: 110px !important;
+    margin-right: 20px !important;
+    flex-shrink: 0; /* Impedisce all'immagine di schiacciarsi */
+}
+
+/* Contenuto testuale della card */
+.book_card div, .author_card div {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start; /* Allinea il testo a sinistra */
+    width: 100%;
+}
+
+/* ===============================
+   FIX GLOBALE EVIDENZIATORE
+=============================== */
+/* Questo rende l'evidenziatore carino in TUTTA la pagina */
+mark {
+    background-color: var(--color_accent_ligth); /* Il nostro verde pastello */
+    color: var(--color_text_dark_green);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-weight: 600;
+}
+
+/* ===============================
+   5. CARD UTENTI (Fix Layout)
+=============================== */
+.user_card {
+    background-color: #fff; /* Sfondo bianco per stacco */
+    border: 1px solid rgba(63, 81, 53, 0.1);
+    border-radius: 16px;
+    padding: 25px; /* Più spazio interno */
+    box-shadow: 0 4px 6px rgba(63, 81, 53, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    /* --- REGOLE IMPORTANTI --- */
+    display: flex !important;
+    flex-direction: column !important; /* Impila tutto in verticale */
+    justify-content: space-between !important; /* Spinge il bottone in fondo */
+    align-items: flex-start !important; /* Allinea testo a sinistra */
+    height: 100% !important; /* Occupa tutta l'altezza della griglia */
+    margin-bottom: 0 !important; /* Via il margine inline del PHP */
+    gap: 10px; /* Spazio tra le righe di testo */
+}
+
+.user_card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(63, 81, 53, 0.1);
+    border-color: var(--color_accent_medium);
+}
+
+/* Stile per le righe di testo (Username, Nome, Cognome) */
+.user_card p {
+    font-family: "Instrument Sans", sans-serif;
+    color: var(--color_text_black);
+    font-size: 1rem;
+    margin: 0; /* Resetta i margini per usare il gap del flex */
+    width: 100%;
+    line-height: 1.5; /* Più leggibile */
+    border-bottom: 1px dashed rgba(0,0,0,0.05); /* Righetta divisoria cute */
+    padding-bottom: 8px;
+}
+
+.user_card p:last-of-type {
+    border-bottom: none; /* Niente riga sull'ultimo elemento */
+}
+
+.user_username {
+    font-size: 1.1rem !important;
+    color: var(--color_accent_dark) !important;
+}
+
+/* Bottone "Visualizza profilo" */
+.user_card a {
+    margin-top: 15px;
+    width: 100%; /* Bottone largo quanto la card */
+    padding: 10px 0;
+    background-color: var(--color_background_dark);
+    color: var(--color_text_dark_green);
+    border-radius: 10px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    align-self: center; /* Centrato */
+}
+
+.user_card a:hover {
+    background-color: var(--color_accent_dark);
+    color: var(--color_background_ligth); /* Diventa scuro al passaggio */
+    box-shadow: 0 4px 8px rgba(63, 81, 53, 0.2);
+}

@@ -27,15 +27,6 @@
     }
 }
 
-.section_divider {
-    border: 0;
-    height: 4px;
-    background-color: #ebe7dd;
-    margin: 60px auto;
-    width: 95%;
-    border-radius: 2px;
-}
-
 .index_section {
     padding: 0 40px;
     margin-bottom: 60px;
