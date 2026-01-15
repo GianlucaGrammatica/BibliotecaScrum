@@ -22,6 +22,7 @@ $nome_visualizzato = 'Utente';  // username da database
 if (isset($_SESSION['nome_utente'])) {
     $nome_visualizzato = $_SESSION['nome_utente'];
 }
+
 if(isset($_POST["logout"])){
     session_unset();
     session_destroy();
@@ -41,6 +42,7 @@ if(isset($_POST["logout"])){
         aspect-ratio: 1 / 1;
         border: 2px solid #3f5135;
         display: block;
+        cursor: pointer;
     }
 
     #navbar_pfp {
@@ -48,6 +50,71 @@ if(isset($_POST["logout"])){
         align-items: center;
         justify-content: center;
         text-decoration: none;
+        position: relative;
+    }
+
+    /* STILI DROPDOWN MENU */
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 55px; /* Spostato leggermente più in basso */
+        background-color: #eae3d2;
+        min-width: 180px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1000;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid #e0e0e0;
+    }
+
+    /* UNIFORMAZIONE TOTALE PULSANTI E LINK */
+    .dropdown-content a, 
+    .dropdown-content button {
+        display: block;
+        width: 100%;
+        padding: 14px 20px; /* Padding aumentato per clic più facile */
+        text-align: left;
+        border: none;
+        background: none;
+        background-color: transparent;
+        cursor: pointer;
+        
+        /* Font settings identici per entrambi */
+        font-family: 'Instrument Sans', sans-serif; 
+        font-size: 15px;
+        font-weight: 500; /* O 'normal' a seconda delle preferenze */
+        color: #333333;
+        text-decoration: none;
+        
+        box-sizing: border-box;
+        margin: 0;
+        outline: none;
+        -webkit-appearance: none; /* Rimuove stili default iOS */
+    }
+
+    .dropdown-content a:hover, 
+    .dropdown-content button:hover {
+        background-color: #f5f5f5;
+        color: #000;
+    }
+
+    /* Separatore opzionale tra gli elementi se lo vuoi */
+    .dropdown-content a {
+        border-bottom: 1px solid #f0f0f0;
+    }
+    .dropdown-content form {
+        margin: 0;
+        padding: 0;
+    }
+
+    .show {
+        display: block;
     }
 </style>
 
@@ -67,6 +134,7 @@ if(isset($_POST["logout"])){
             </form>
         </div>
     </div>
+    
     <div class="navbar_rigth">
         <?php if (isset($_SESSION['logged']) && $_SESSION['logged'] === true) { ?>
             <a href="#"
@@ -100,14 +168,48 @@ if(isset($_POST["logout"])){
                     $pfpPath .= '?v=' . time();
                 }
                 ?>
-                <a href="./profilo" class="navbar_link_img instrument-sans-semibold" id="navbar_pfp">
-                    <img src="<?= $pfpPath ?>" alt="pfp" class="navbar_pfp">
-                </a>
+                
+                <div class="dropdown">
+                    <div id="navbar_pfp" onclick="toggleDropdown()">
+                        <img src="<?= $pfpPath ?>" alt="pfp" class="navbar_pfp">
+                    </div>
+
+                    <div id="myDropdown" class="dropdown-content">
+                        <a href="./profilo">Profilo</a>
+                        
+                        <?php if (checkAccess('amministratore') || checkAccess('bibliotecario')) { ?>
+                            <a href="<?= $path ?>dashboard">Dashboard</a>
+                        <?php } ?>
+
+                        <form action="" method="post">
+                            <input type="hidden" name="logout" value="1">
+                            <button type="submit">Logout</button>
+                        </form>
+                    </div>
+                </div>
+
             <?php } else { ?>
                 <a href="./login" class="navbar_link instrument-sans-semibold text_underline">Accedi</a>
             <?php } ?>
 
         </div>
-
     </div>
 </nav>
+
+<script>
+    function toggleDropdown() {
+        document.getElementById("myDropdown").classList.toggle("show");
+    }
+
+    window.onclick = function(event) {
+        if (!event.target.matches('.navbar_pfp')) {
+            var dropdowns = document.getElementsByClassName("dropdown-content");
+            for (var i = 0; i < dropdowns.length; i++) {
+                var openDropdown = dropdowns[i];
+                if (openDropdown.classList.contains('show')) {
+                    openDropdown.classList.remove('show');
+                }
+            }
+        }
+    }
+</script>

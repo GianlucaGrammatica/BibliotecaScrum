@@ -26,12 +26,11 @@ $whitelist = [
     '/admin/dashboard-libri' => 'pages/admin/D_libri.php',
     '/admin/dashboard-utenti' => 'pages/admin/D_utenti.php',
     '/admin/dashboard-report' => 'pages/admin/D_report.php',
+    '/cover-fetcher'=> 'pages/admin/coverFetcher.php',
+    
     //bibliotecario
     '/bibliotecario/dashboard-gestioneprestiti' => 'pages/bibliotecario/D_gestioneprestiti.php',
     '/bibliotecario/dashboard-aggiuntaprestiti' => 'pages/bibliotecario/D_aggiuntaprestiti.php',
-
-    //temp
-    '/cover-fetcher'=> 'coverFetcher.php',
 ];
 
 
