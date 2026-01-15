@@ -77,6 +77,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!$nuovo_id)
                 throw new Exception("Errore nella creazione dell'utente.");
 
+            // Assign a random default profile picture
+            $defaultPfps = glob('src/DefaultPfp/*.png');
+            if (!empty($defaultPfps)) {
+                $randomPfp = $defaultPfps[array_rand($defaultPfps)];
+                $pfpDir = 'public/pfp';
+                if (!file_exists($pfpDir)) {
+                    mkdir($pfpDir, 0755, true);
+                }
+                $newPfpPath = $pfpDir . '/' . $nuovo_id . '.png';
+                copy($randomPfp, $newPfpPath);
+            }
+
             // TOKEN EMAIL
             $token = bin2hex(random_bytes(32));
             $ins = $pdo->prepare("INSERT INTO tokenemail (token, codice_alfanumerico) VALUES (?, ?)");
@@ -183,7 +195,9 @@ $page_css = "./public/css/style_forms.css";
 
 </div>
 
-<?php include './src/includes/footer.php'; ?>
+</div>
+</body>
+</html>
 
 <script>
 function redirectConCodice(conCodice) {

@@ -260,12 +260,12 @@ DROP TABLE IF EXISTS `biblioteche`;
 CREATE TABLE `biblioteche` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `nome` varchar(50) NOT NULL,
-  `latitudine` decimal(10,8) DEFAULT NULL,
-  `longitudine` decimal(11,8) DEFAULT NULL,
+  `lat` decimal(10,8) DEFAULT NULL,
+  `lon` decimal(11,8) DEFAULT NULL,
   `indirizzo` varchar(255) DEFAULT NULL,
   `orari` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`orari`)),
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -275,13 +275,17 @@ CREATE TABLE `biblioteche` (
 LOCK TABLES `biblioteche` WRITE;
 /*!40000 ALTER TABLE `biblioteche` DISABLE KEYS */;
 INSERT INTO `biblioteche` VALUES
-(1,'Biblioteca Civica Bertoliana (Sede Centrale)',45.54836900,11.54453900,'Contrà Riale 5, 36100 Vicenza','{\n        \"lun\": \"08:00-19:00\",\n        \"mar\": \"08:00-19:00\",\n        \"mer\": \"08:00-19:00\",\n        \"gio\": \"08:00-19:00\",\n        \"ven\": \"08:00-19:00\",\n        \"sab\": \"08:00-12:30\",\n        \"dom\": \"Chiuso\"\n    }'),
-(2,'Biblioteca di Palazzo Costantini',45.54825800,11.54383100,'Contrà Riale 13, 36100 Vicenza','{\n        \"lun\": \"09:00-21:00\",\n        \"mar\": \"09:00-21:00\",\n        \"mer\": \"09:00-21:00\",\n        \"gio\": \"09:00-21:00\",\n        \"ven\": \"09:00-21:00\",\n        \"sab\": \"09:00-12:30, 15:00-19:00\",\n        \"dom\": \"09:00-12:30, 15:00-19:00\"\n    }'),
-(3,'Biblioteca di Villa Tacchi',45.54250000,11.56500000,'Viale della Pace 89, 36100 Vicenza','{\n        \"lun\": \"14:30-19:00\",\n        \"mar\": \"14:30-19:00\",\n        \"mer\": \"14:30-19:00\",\n        \"gio\": \"14:30-19:00\",\n        \"ven\": \"14:30-19:00\",\n        \"sab\": \"Chiuso\",\n        \"dom\": \"Chiuso\"\n    }'),
-(4,'Biblioteca di Riviera Berica',45.49550000,11.58100000,'Viale Riviera Berica 631, 36100 Vicenza','{\n        \"lun\": \"14:30-19:00\",\n        \"mar\": \"14:30-19:00\",\n        \"mer\": \"14:30-19:00\",\n        \"gio\": \"14:30-19:00\",\n        \"ven\": \"14:30-19:00\",\n        \"sab\": \"Chiuso\",\n        \"dom\": \"Chiuso\"\n    }'),
-(5,'Biblioteca Villaggio del Sole',45.55580000,11.52250000,'Via Cristoforo Colombo 41/A, 36100 Vicenza','{\n        \"lun\": \"14:30-19:00\",\n        \"mar\": \"14:30-19:00\",\n        \"mer\": \"14:30-19:00\",\n        \"gio\": \"14:30-19:00\",\n        \"ven\": \"14:30-19:00\",\n        \"sab\": \"Chiuso\",\n        \"dom\": \"Chiuso\"\n    }'),
-(6,'Biblioteca di Laghetto',45.56850000,11.53600000,'Via Lago di Pusiano 3, 36100 Vicenza','{\n        \"lun\": \"14:30-19:00\",\n        \"mar\": \"14:30-19:00\",\n        \"mer\": \"14:30-19:00\",\n        \"gio\": \"14:30-19:00\",\n        \"ven\": \"14:30-19:00\",\n        \"sab\": \"Chiuso\",\n        \"dom\": \"Chiuso\"\n    }'),
-(7,'Biblioteca di Anconetta',45.56520000,11.56650000,'Via Aurelio dall\'Acqua 16, 36100 Vicenza','{\n        \"lun\": \"14:30-19:00\",\n        \"mar\": \"14:30-19:00\",\n        \"mer\": \"14:30-19:00\",\n        \"gio\": \"14:30-19:00\",\n        \"ven\": \"14:30-19:00\",\n        \"sab\": \"Chiuso\",\n        \"dom\": \"Chiuso\"\n    }');
+(4,'Biblioteca di Riviera Berica',45.50572410,11.56721010,'Viale Riviera Berica 631, 36100 Vicenza','{\n        \"lun\": \"14:30-19:00\",\n        \"mar\": \"14:30-19:00\",\n        \"mer\": \"14:30-19:00\",\n        \"gio\": \"14:30-19:00\",\n        \"ven\": \"14:30-19:00\",\n        \"sab\": \"Chiuso\",\n        \"dom\": \"Chiuso\"\n    }'),
+(5,'Biblioteca Villaggio del Sole',45.55653310,11.51340660,'Via Cristoforo Colombo 41/A, 36100 Vicenza','{\n        \"lun\": \"14:30-19:00\",\n        \"mar\": \"14:30-19:00\",\n        \"mer\": \"14:30-19:00\",\n        \"gio\": \"14:30-19:00\",\n        \"ven\": \"14:30-19:00\",\n        \"sab\": \"Chiuso\",\n        \"dom\": \"Chiuso\"\n    }'),
+(6,'Biblioteca di Laghetto',45.57348310,11.54132580,'Via Lago di Pusiano 3, 36100 Vicenza','{\n        \"lun\": \"14:30-19:00\",\n        \"mar\": \"14:30-19:00\",\n        \"mer\": \"14:30-19:00\",\n        \"gio\": \"14:30-19:00\",\n        \"ven\": \"14:30-19:00\",\n        \"sab\": \"Chiuso\",\n        \"dom\": \"Chiuso\"\n    }'),
+(8,'Biblioteca dei Ferrovieri',45.53779860,11.52425170,'Via Francesco Rismondo, 2, 36100 Vicenza VI',NULL),
+(9,'Biblioteca Internazionale La Vigna',45.55106720,11.53337230,'Contra\' Porta Santa Croce, 3, 36100 Vicenza VI',NULL),
+(10,'Biblioteca di Asiago',45.87297060,11.50221330,'Via Millepini, 1, 36012 Asiago VI',NULL),
+(11,'Biblioteca di Breganze',45.70851820,11.55915290,'Via Castelletto, 54, 36042 Breganze VI',NULL),
+(12,'Biblioteca di Brogliano',45.58834370,11.36193700,'Piazza Roma, 8, 36070 Brogliano VI',NULL),
+(13,'Biblioteca di Brendola',45.47040170,11.44414740,'Piazza del Donatore, 36040 Brendola VI',NULL),
+(14,'Biblioteca di Cassola',45.76731600,11.75603760,'Piazza Europa, 1, 36022 San Giuseppe VI',NULL),
+(15,'Biblioteca di Creazzo',45.53229600,11.47815420,'Largo Tiepolo, 6, 36051 Creazzo VI',NULL);
 /*!40000 ALTER TABLE `biblioteche` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -371,7 +375,6 @@ CREATE TABLE `copie` (
   `isbn` bigint(20) DEFAULT NULL,
   `ean` varchar(50) NOT NULL,
   `condizione` smallint(6) NOT NULL,
-  `disponibile` tinyint(1) NOT NULL,
   `id_biblioteca` int(11) DEFAULT NULL,
   `anno_edizione` smallint(6) DEFAULT NULL,
   `editore` varchar(100) NOT NULL,
@@ -381,7 +384,7 @@ CREATE TABLE `copie` (
   KEY `fk_copie_biblioteche` (`id_biblioteca`),
   CONSTRAINT `copie_ibfk_1` FOREIGN KEY (`isbn`) REFERENCES `libri` (`isbn`),
   CONSTRAINT `fk_copie_biblioteche` FOREIGN KEY (`id_biblioteca`) REFERENCES `biblioteche` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=99 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -391,78 +394,49 @@ CREATE TABLE `copie` (
 LOCK TABLES `copie` WRITE;
 /*!40000 ALTER TABLE `copie` DISABLE KEYS */;
 INSERT INTO `copie` VALUES
-(1,9788804523363,'9788804523363-01',3,1,2,2006,'Einaudi','409B542FE'),
-(2,9788804523363,'9788804523363-02',1,1,7,2006,'Mondadori','5DB0257C1'),
-(3,9788804666985,'9788804666985-01',2,1,4,2005,'Mondadori','122F32DCC0'),
-(4,9788804667920,'9788804667920-01',1,1,6,2012,'Feltrinelli','16929FFEF2'),
-(5,9788804667920,'9788804667920-02',3,1,1,2019,'Mondadori','9EEF7331F'),
-(6,9788804667982,'9788804667982-01',3,1,1,1827,'Adelphi','1A4B8B806'),
-(7,9788804667982,'9788804667982-02',3,1,3,1827,'Einaudi','5AE0B8776'),
-(8,9788804667982,'9788804667982-03',2,1,3,1827,'Mondadori','B2BBE55AB'),
-(9,9788804668231,'9788804668231-01',3,1,1,1813,'Adelphi','EBDDA317B'),
-(10,9788804668231,'9788804668231-02',1,1,6,1813,'Feltrinelli','72505269C'),
-(11,9788804668231,'9788804668231-03',1,1,5,1813,'Einaudi','D730BF381'),
-(12,9788804682497,'9788804682497-01',1,1,3,2014,'Feltrinelli','D0971E56B'),
-(13,9788804682497,'9788804682497-02',1,1,1,2002,'Einaudi','113653994A'),
-(14,9788804682497,'9788804682497-03',1,1,1,2010,'Mondadori','8B63206A3'),
-(15,9788804683838,'9788804683838-01',3,1,6,1986,'Mondadori','112DAE6160'),
-(17,9788804702003,'9788804702003-01',2,1,6,1954,'Einaudi','170D155722'),
-(18,9788804702003,'9788804702003-02',3,1,1,1954,'Rizzoli','13BDBAAE5E'),
-(19,9788804702003,'9788804702003-03',3,1,7,1954,'Mondadori','AE3F3FB5F'),
-(20,9788804702027,'9788804702027-01',2,1,7,1955,'Adelphi','267F101AC'),
-(21,9788804702027,'9788804702027-02',1,1,5,1955,'Feltrinelli','865063193'),
-(22,9788804719230,'9788804719230-01',1,1,2,2013,'Einaudi','EDF1D4377'),
-(23,9788806173762,'9788806173762-01',1,1,5,2001,'Mondadori','14F5E64108'),
-(24,9788806173762,'9788806173762-02',3,1,6,2001,'Feltrinelli','8E0C2C923'),
-(25,9788806173762,'9788806173762-03',1,1,2,2001,'Feltrinelli','13B038C788'),
-(26,9788806203018,'9788806203018-01',1,1,2,2004,'Mondadori','1546FC5170'),
-(27,9788806203018,'9788806203018-02',2,1,1,2011,'Rizzoli','16C3FFC9BD'),
-(28,9788806203018,'9788806203018-03',2,1,7,2006,'Adelphi','10BE7E880E'),
-(29,9788806206019,'9788806206019-01',1,1,6,2005,'Einaudi','13C8D5D00F'),
-(30,9788806206019,'9788806206019-02',1,1,4,2003,'Feltrinelli','C4C3D6098'),
-(31,9788806206019,'9788806206019-03',2,1,6,2017,'Adelphi','16A04C42F6'),
-(32,9788806218449,'9788806218449-01',3,1,2,2019,'Rizzoli','154E52DCC4'),
-(33,9788806218449,'9788806218449-02',3,1,5,2012,'Feltrinelli','7E5C22DE0'),
-(34,9788806218449,'9788806218449-03',2,1,6,2018,'Mondadori','12E655C72D'),
-(35,9788806219378,'9788806219378-01',3,1,5,1980,'Feltrinelli','11FB3E1732'),
-(36,9788806219378,'9788806219378-02',1,1,7,1980,'Adelphi','8462C8DC4'),
-(37,9788806225881,'9788806225881-01',2,1,4,2005,'Feltrinelli','126A766179'),
-(38,9788806225911,'9788806225911-01',2,1,5,1943,'Feltrinelli','A468CA9AD'),
-(39,9788806226161,'9788806226161-01',2,1,4,2003,'Rizzoli','1643078FBB'),
-(40,9788806226161,'9788806226161-02',2,1,5,2014,'Rizzoli','2E274D66A'),
-(41,9788806227441,'9788806227441-01',3,1,1,1957,'Mondadori','35F2F3BEB'),
-(42,9788806227441,'9788806227441-02',2,1,3,1957,'Einaudi','12C24BB979'),
-(44,9788807013936,'9788807013936-01',2,1,6,1996,'Feltrinelli','822125F51'),
-(45,9788807880866,'9788807880866-01',3,1,7,1984,'Einaudi','13E7FF5321'),
-(46,9788807882204,'9788807882204-01',3,1,6,1926,'Feltrinelli','742432FA3'),
-(47,9788807900359,'9788807900359-01',2,1,2,1876,'Feltrinelli','B6C2CA177'),
-(48,9788807900359,'9788807900359-02',3,1,6,1876,'Mondadori','10D94F8339'),
-(49,9788807900359,'9788807900359-03',3,1,6,1876,'Rizzoli','10F41FF5F7'),
-(50,9788807900441,'9788807900441-01',3,1,7,2002,'Adelphi','777D6C39C'),
-(51,9788807900441,'9788807900441-02',1,1,4,2014,'Rizzoli','10B3F9225'),
-(52,9788807900441,'9788807900441-03',3,1,3,2002,'Rizzoli','10C62E941A'),
-(53,9788807900601,'9788807900601-01',2,1,2,2001,'Adelphi','87FE5AB7B'),
-(54,9788807900601,'9788807900601-02',3,1,1,2015,'Mondadori','F283197A1'),
-(55,9788811360500,'9788811360500-01',2,1,4,2019,'Einaudi','83759B273'),
-(62,9788834728560,'9788834728560-01',2,1,3,1965,'Adelphi','15D04388D4'),
-(66,9788845293672,'9788845293672-01',3,1,5,2018,'Mondadori','607E50ADA'),
-(67,9788845293672,'9788845293672-02',3,1,6,2013,'Einaudi','AE078A785'),
-(68,9788845293672,'9788845293672-03',1,1,6,2009,'Einaudi','A758956A5'),
-(84,9788804628334,'',0,1,NULL,NULL,'Mondadori',NULL),
-(85,9788834739505,'',0,1,NULL,NULL,'Fanucci',NULL),
-(86,9788842916659,'',0,1,NULL,NULL,'Nord',NULL),
-(87,9788804711951,'',0,1,NULL,NULL,'Mondadori',NULL),
-(88,9788804672375,'',0,1,NULL,NULL,'Mondadori',NULL),
-(89,9788804666688,'',0,1,NULL,NULL,'Mondadori',NULL),
-(90,9788817064439,'',0,1,NULL,NULL,'Rizzoli',NULL),
-(91,9788804616898,'',0,1,NULL,NULL,'Mondadori',NULL),
-(92,9788856667103,'',0,1,NULL,NULL,'Piemme',NULL),
-(93,9788806220039,'',0,1,NULL,NULL,'Einaudi',NULL),
-(94,9788834742215,'',0,1,NULL,NULL,'Fanucci',NULL),
-(95,9788804736343,'',0,1,NULL,NULL,'Mondadori',NULL),
-(96,9788804665292,'',0,1,NULL,NULL,'Mondadori',NULL),
-(97,9788854189355,'',0,1,NULL,NULL,'Newton Compton',NULL),
-(98,9788834734364,'',0,1,NULL,NULL,'Fanucci',NULL);
+(3,9788804666985,'9788804666985-01',2,4,2005,'Mondadori','122F32DCC0'),
+(4,9788804667920,'9788804667920-01',1,6,2012,'Feltrinelli','16929FFEF2'),
+(10,9788804668231,'9788804668231-02',1,6,1813,'Feltrinelli','72505269C'),
+(11,9788804668231,'9788804668231-03',1,5,1813,'Einaudi','D730BF381'),
+(15,9788804683838,'9788804683838-01',3,6,1986,'Mondadori','112DAE6160'),
+(17,9788804702003,'9788804702003-01',2,6,1954,'Einaudi','170D155722'),
+(21,9788804702027,'9788804702027-02',1,5,1955,'Feltrinelli','865063193'),
+(23,9788806173762,'9788806173762-01',1,5,2001,'Mondadori','14F5E64108'),
+(24,9788806173762,'9788806173762-02',3,6,2001,'Feltrinelli','8E0C2C923'),
+(29,9788806206019,'9788806206019-01',1,6,2005,'Einaudi','13C8D5D00F'),
+(30,9788806206019,'9788806206019-02',1,4,2003,'Feltrinelli','C4C3D6098'),
+(31,9788806206019,'9788806206019-03',2,6,2017,'Adelphi','16A04C42F6'),
+(33,9788806218449,'9788806218449-02',3,5,2012,'Feltrinelli','7E5C22DE0'),
+(34,9788806218449,'9788806218449-03',2,6,2018,'Mondadori','12E655C72D'),
+(35,9788806219378,'9788806219378-01',3,5,1980,'Feltrinelli','11FB3E1732'),
+(37,9788806225881,'9788806225881-01',2,4,2005,'Feltrinelli','126A766179'),
+(38,9788806225911,'9788806225911-01',2,5,1943,'Feltrinelli','A468CA9AD'),
+(39,9788806226161,'9788806226161-01',2,4,2003,'Rizzoli','1643078FBB'),
+(40,9788806226161,'9788806226161-02',2,5,2014,'Rizzoli','2E274D66A'),
+(44,9788807013936,'9788807013936-01',2,6,1996,'Feltrinelli','822125F51'),
+(46,9788807882204,'9788807882204-01',3,6,1926,'Feltrinelli','742432FA3'),
+(48,9788807900359,'9788807900359-02',3,6,1876,'Mondadori','10D94F8339'),
+(49,9788807900359,'9788807900359-03',3,6,1876,'Rizzoli','10F41FF5F7'),
+(51,9788807900441,'9788807900441-02',1,4,2014,'Rizzoli','10B3F9225'),
+(55,9788811360500,'9788811360500-01',2,4,2019,'Einaudi','83759B273'),
+(66,9788845293672,'9788845293672-01',3,5,2018,'Mondadori','607E50ADA'),
+(67,9788845293672,'9788845293672-02',3,6,2013,'Einaudi','AE078A785'),
+(68,9788845293672,'9788845293672-03',1,6,2009,'Einaudi','A758956A5'),
+(84,9788804628334,'',0,NULL,NULL,'Mondadori',NULL),
+(85,9788834739505,'',0,NULL,NULL,'Fanucci',NULL),
+(86,9788842916659,'',0,NULL,NULL,'Nord',NULL),
+(87,9788804711951,'',0,NULL,NULL,'Mondadori',NULL),
+(88,9788804672375,'',0,NULL,NULL,'Mondadori',NULL),
+(89,9788804666688,'',0,NULL,NULL,'Mondadori',NULL),
+(90,9788817064439,'',0,NULL,NULL,'Rizzoli',NULL),
+(91,9788804616898,'',0,NULL,NULL,'Mondadori',NULL),
+(92,9788856667103,'',0,NULL,NULL,'Piemme',NULL),
+(93,9788806220039,'',0,NULL,NULL,'Einaudi',NULL),
+(94,9788834742215,'',0,NULL,NULL,'Fanucci',NULL),
+(95,9788804736343,'',0,NULL,NULL,'Mondadori',NULL),
+(96,9788804665292,'',0,NULL,NULL,'Mondadori',NULL),
+(97,9788854189355,'',0,NULL,NULL,'Newton Compton',NULL),
+(98,9788834734364,'',0,NULL,NULL,'Fanucci',NULL);
 /*!40000 ALTER TABLE `copie` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -679,6 +653,7 @@ CREATE TABLE `multe` (
   `importo` decimal(10,2) NOT NULL,
   `causale` text NOT NULL,
   `data_creata` date DEFAULT current_timestamp(),
+  `pagata` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id_multa`),
   KEY `id_prestito` (`id_prestito`),
   KEY `codice_alfanumerico` (`codice_alfanumerico`),
@@ -764,15 +739,15 @@ DROP TABLE IF EXISTS `prenotazioni`;
 CREATE TABLE `prenotazioni` (
   `id_prenotazione` int(11) NOT NULL AUTO_INCREMENT,
   `codice_alfanumerico` varchar(6) NOT NULL,
-  `isbn` bigint(20) DEFAULT NULL,
+  `id_copia` int(11) NOT NULL,
   `data_prenotazione` date DEFAULT NULL,
   `data_assegnazione` date DEFAULT NULL,
   PRIMARY KEY (`id_prenotazione`),
-  KEY `codice_alfanumerico` (`codice_alfanumerico`),
-  KEY `isbn` (`isbn`),
-  CONSTRAINT `prenotazioni_ibfk_1` FOREIGN KEY (`codice_alfanumerico`) REFERENCES `utenti` (`codice_alfanumerico`),
-  CONSTRAINT `prenotazioni_ibfk_2` FOREIGN KEY (`isbn`) REFERENCES `libri` (`isbn`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  KEY `fk_prenotazioni_copie` (`id_copia`),
+  KEY `fk_prenotazioni_utenti` (`codice_alfanumerico`),
+  CONSTRAINT `fk_prenotazioni_copie` FOREIGN KEY (`id_copia`) REFERENCES `copie` (`id_copia`),
+  CONSTRAINT `fk_prenotazioni_utenti` FOREIGN KEY (`codice_alfanumerico`) REFERENCES `utenti` (`codice_alfanumerico`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -781,6 +756,12 @@ CREATE TABLE `prenotazioni` (
 
 LOCK TABLES `prenotazioni` WRITE;
 /*!40000 ALTER TABLE `prenotazioni` DISABLE KEYS */;
+INSERT INTO `prenotazioni` VALUES
+(1,'BOT_01',66,'2023-01-01',NULL),
+(2,'BOT_02',66,'2023-01-02',NULL),
+(3,'BOT_03',66,'2023-01-03',NULL),
+(4,'BOT_04',66,'2023-01-04',NULL),
+(5,'BOT_05',66,'2023-01-05',NULL);
 /*!40000 ALTER TABLE `prenotazioni` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -804,7 +785,7 @@ CREATE TABLE `prestiti` (
   KEY `id_copia` (`id_copia`),
   CONSTRAINT `prestiti_ibfk_1` FOREIGN KEY (`codice_alfanumerico`) REFERENCES `utenti` (`codice_alfanumerico`),
   CONSTRAINT `prestiti_ibfk_2` FOREIGN KEY (`id_copia`) REFERENCES `copie` (`id_copia`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=179 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -813,6 +794,41 @@ CREATE TABLE `prestiti` (
 
 LOCK TABLES `prestiti` WRITE;
 /*!40000 ALTER TABLE `prestiti` DISABLE KEYS */;
+INSERT INTO `prestiti` VALUES
+(1,'00000C',3,'2026-01-09','2026-02-08','2026-01-09',0),
+(2,'00000C',3,'2026-01-09','2026-02-08','2026-01-09',0),
+(3,'00000C',21,'2026-01-09','2026-02-08','2026-01-10',0),
+(4,'00000B',48,'2025-11-09','2025-12-09','2026-01-10',0),
+(5,'000006',89,'2026-01-09','2026-02-08','2026-01-10',0),
+(6,'00000C',11,'2026-01-09','2026-02-08','2026-01-10',0),
+(8,'000006',55,'2026-01-10','2026-02-09','2026-01-10',0),
+(10,'000006',38,'2026-01-10','2026-02-09','2026-01-10',0),
+(12,'000006',88,'2026-01-10','2026-02-09','2026-01-10',0),
+(13,'000006',88,'2026-01-10','2026-02-09','2026-01-10',0),
+(14,'000003',55,'2026-01-10','2026-02-09','2026-01-10',0),
+(15,'000003',55,'2026-01-10','2026-02-09','2026-01-10',0),
+(16,'000006',88,'2026-01-10','2026-02-09','2026-01-10',0),
+(17,'000004',11,'2026-01-10','2026-02-09','2026-01-10',0),
+(18,'000004',88,'2026-01-10','2026-02-09','2026-01-10',0),
+(19,'000004',88,'2026-01-10','2026-01-09',NULL,0),
+(20,'000006',67,'2026-01-10','2026-02-09',NULL,0),
+(21,'00000C',40,'2026-01-10','2026-02-09','2026-01-10',0),
+(22,'00000C',55,'2026-01-10','2026-01-12',NULL,0),
+(23,'00000C',39,'2026-01-10','2026-02-09',NULL,0),
+(24,'00000C',84,'2025-10-01','2025-10-31','2025-10-30',0),
+(25,'00000B',85,'2025-10-05','2025-11-04','2025-11-02',0),
+(26,'000006',86,'2025-10-10','2025-11-10','2025-11-09',0),
+(27,'000003',87,'2025-11-02','2025-12-02','2025-12-01',0),
+(28,'000004',88,'2025-11-12','2025-12-12','2025-12-10',0),
+(29,'00000C',89,'2025-11-15','2025-12-15','2025-12-20',1),
+(30,'00000B',90,'2025-12-01','2025-12-31','2025-12-30',0),
+(31,'000006',91,'2025-12-05','2026-01-04','2026-01-03',0),
+(32,'000003',3,'2025-12-10','2026-01-09','2026-01-09',0),
+(114,'00000C',96,'2025-01-01','2025-02-01','2025-01-15',0),
+(115,'00000C',84,'2026-01-14','2026-01-16',NULL,0),
+(116,'00000C',40,'2024-01-01','2024-02-01','2024-01-15',0),
+(117,'00000C',15,'2024-01-01','2024-02-01','2024-01-15',0),
+(118,'00000C',4,'2024-01-01','2024-02-01','2024-01-15',0);
 /*!40000 ALTER TABLE `prestiti` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -837,7 +853,7 @@ CREATE TABLE `recensioni` (
   KEY `codice_alfanumerico` (`codice_alfanumerico`),
   CONSTRAINT `recensioni_ibfk_1` FOREIGN KEY (`isbn`) REFERENCES `libri` (`isbn`),
   CONSTRAINT `recensioni_ibfk_2` FOREIGN KEY (`codice_alfanumerico`) REFERENCES `utenti` (`codice_alfanumerico`)
-) ENGINE=InnoDB AUTO_INCREMENT=446 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=454 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1031,8 +1047,53 @@ INSERT INTO `recensioni` VALUES
 (442,9788834734364,'000007',5,'Dick era un visionario paranoico.','2025-12-14',0,0),
 (443,9788834734364,'000005',3,'Un po\' datato in alcuni aspetti tecnologici.','2025-12-14',0,0),
 (444,9788834734364,'000006',5,'L\'atmosfera di decadenza è palpabile.','2025-12-14',0,0),
-(445,9788834734364,'000007',4,'Il mercerismo è un concetto affascinante.','2025-12-14',0,0);
+(445,9788834734364,'000007',4,'Il mercerismo è un concetto affascinante.','2025-12-14',0,0),
+(446,9788834742215,'00000C',2,'Bello','2026-01-09',0,0),
+(447,9788804711951,'00000C',3,'S','2026-01-09',0,0),
+(448,9788804702027,'00000C',5,'Bello','2026-01-10',0,0),
+(449,9788845292613,'00000C',4,'nofbfdbherf','2026-01-10',0,0),
+(450,9788804616898,'00000C',4,'dwada','2026-01-10',0,0),
+(451,9788804702027,'00000D',4,'Sborro','2026-01-10',0,0),
+(452,9788804665292,'00000B',5,'Bel Libro. Lo consiglio','2026-01-14',0,0),
+(453,9788804665292,'00000C',5,'Ho letto questo libro ed è fantastico. Il badge conferma che l\'ho preso in prestito!','2026-01-14',0,0);
 /*!40000 ALTER TABLE `recensioni` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `richieste_bibliotecario`
+--
+
+DROP TABLE IF EXISTS `richieste_bibliotecario`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `richieste_bibliotecario` (
+  `id_richiesta` int(11) NOT NULL AUTO_INCREMENT,
+  `codice_alfanumerico` varchar(6) NOT NULL,
+  `tipo_richiesta` enum('estensione_prestito','altro') NOT NULL DEFAULT 'estensione_prestito',
+  `id_copia` int(11) NOT NULL,
+  `data_richiesta` datetime DEFAULT current_timestamp(),
+  `data_scadenza_richiesta` date DEFAULT NULL,
+  `stato` enum('in_attesa','approvata','rifiutata') DEFAULT 'in_attesa',
+  `note_admin` text DEFAULT NULL,
+  PRIMARY KEY (`id_richiesta`),
+  KEY `codice_alfanumerico` (`codice_alfanumerico`),
+  KEY `id_copia` (`id_copia`),
+  CONSTRAINT `richieste_bibliotecario_ibfk_1` FOREIGN KEY (`codice_alfanumerico`) REFERENCES `utenti` (`codice_alfanumerico`) ON DELETE CASCADE,
+  CONSTRAINT `richieste_bibliotecario_ibfk_2` FOREIGN KEY (`id_copia`) REFERENCES `copie` (`id_copia`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `richieste_bibliotecario`
+--
+
+LOCK TABLES `richieste_bibliotecario` WRITE;
+/*!40000 ALTER TABLE `richieste_bibliotecario` DISABLE KEYS */;
+INSERT INTO `richieste_bibliotecario` VALUES
+(1,'00000C','estensione_prestito',84,'2026-01-14 19:43:28','2026-01-16','in_attesa',NULL),
+(2,'00000C','estensione_prestito',55,'2026-01-14 22:31:03','2026-01-12','in_attesa',NULL),
+(3,'00000C','estensione_prestito',39,'2026-01-14 22:31:04','2026-02-09','in_attesa',NULL);
+/*!40000 ALTER TABLE `richieste_bibliotecario` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -1071,7 +1132,10 @@ INSERT INTO `ruoli` VALUES
 ('000009',1,0,0,0),
 ('00000A',0,1,0,0),
 ('00000B',0,0,1,0),
-('00000C',0,0,0,1);
+('00000C',0,0,0,1),
+('00000D',1,0,0,0),
+('00000E',1,0,0,0),
+('00000F',1,0,0,0);
 /*!40000 ALTER TABLE `ruoli` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1090,7 +1154,7 @@ CREATE TABLE `tokenemail` (
   PRIMARY KEY (`id`),
   KEY `token` (`token`),
   KEY `codice_alfanumerico` (`codice_alfanumerico`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1110,7 +1174,10 @@ INSERT INTO `tokenemail` VALUES
 (10,'000001','e727f5b3a8641b3702cdebe02ad70f5999559495d53e1d6875c2bcda40619c8f','2025-12-13 10:12:26'),
 (11,'000008','1b79aa7784c7128145f48fa07e3d5459c32f3f00fc1887ec6212d9f8a214c53d','2025-12-14 20:10:30'),
 (13,'000008','6b6243d55fd5466383b375d75c14315ff1360a9dcd4df4a7f6b8a36b1891baf7','2025-12-16 15:21:53'),
-(14,'000008','f9906e411b89e37529fd2719c779ef521009c326f0d0229f4241be02e0a32fa4','2025-12-16 15:23:35');
+(14,'000008','f9906e411b89e37529fd2719c779ef521009c326f0d0229f4241be02e0a32fa4','2025-12-16 15:23:35'),
+(18,'00000E','a426efa7547445dc67948c878e15e3fe2d66de7626d6218c15cba0757cb4d1e5','2026-01-12 14:09:49'),
+(19,'00000E','d3ca78da7be64e277d001eb875fdd11085755ba664fd7c973e3cde92262ffe64','2026-01-12 14:10:16'),
+(20,'00000F','2d5b7a253ee18f2557f1f57469d8f607f523eb6002782cbee7dbde73f599e260','2026-01-13 10:04:31');
 /*!40000 ALTER TABLE `tokenemail` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1186,7 +1253,15 @@ INSERT INTO `utenti` VALUES
 ('000009','StudenteProva','Studente','Prova','RSSMRA85T10A562S','studente.prova@example.com','$2y$10$Th5mE4AGgEpZnMd34rG0quP0yvwg1etVtGS2vh.bb/7WHBj3UEpxC',0,0,0,0,1,'2025-12-17'),
 ('00000A','DocenteProva','Docente','Prova','BNCLRN80A01H501U','docente.prova@example.com','$2y$10$iaWHpX4iHgrXeTjxBDKjZOSI7SCTFaG3fRiWoofRIXMOvowyBYKX.',0,0,0,0,1,'2025-12-17'),
 ('00000B','BibliotecarioProva','Bibliotecario','Prova','PLCNDR75B12C345D','bibliotecario.prova@example.com','$2y$10$Dvprn8Xd8io3QsQT3iGuJu9KJ0QZmv/o8iYnpf4WoWn1b.bNH6brC',0,0,0,0,1,'2025-12-17'),
-('00000C','AdminProva','Amministratore','Prova','VRDNRD70D22F789G','admin.prova@example.com','$2y$10$sT/MMNj60JJowywNPuOA8OqIgqUWvQrTFlOrlIu/20UCbgUeJaPlq',0,0,0,0,1,'2025-12-17');
+('00000C','AdminProva','Amministratore','Prova','VRDNRD70D22F789G','admin.prova@example.com','$2y$10$sT/MMNj60JJowywNPuOA8OqIgqUWvQrTFlOrlIu/20UCbgUeJaPlq',0,0,0,0,1,'2025-12-17'),
+('00000D','Porcoddio','Por','Codio','CDOPRO51D50L157M','khevinkharai@gmail.com','$2y$10$yOVeoYN52PkJ7mrnGono8.EAmhucZArCF8GXlq8wm47H43Kf0kIu.',0,0,0,0,1,'2026-01-10'),
+('00000E','HackerNero','Maurizio','Costanzo','CSTMRZ85L03L840W','tuanonna@gmail.com','$2y$10$7OgQ3SfpWC.N16FhzVzM1O9TWjHVTc/fR19OkLVAywxHXpT.gshda',0,0,0,0,0,'2026-01-12'),
+('00000F','HackerNer0','Hacker','Ner0','NREHKR09B11G302X','10934123@itisrossi.vi.it','$2y$10$qfQb3wzldzOb7LNxX55uh.4eZ9Og0VpH4Yir5Jz/m6F2WOX3cIttW',0,0,0,0,0,'2026-01-13'),
+('BOT_01','BotUno','Tizio','Uno','','bot1@test.com','hash_finto',0,0,0,0,0,'2026-01-14'),
+('BOT_02','BotDue','Caio','Due','','bot2@test.com','hash_finto',0,0,0,0,0,'2026-01-14'),
+('BOT_03','BotTre','Sempronio','Tre','','bot3@test.com','hash_finto',0,0,0,0,0,'2026-01-14'),
+('BOT_04','BotQuattro','Mevio','Quattro','','bot4@test.com','hash_finto',0,0,0,0,0,'2026-01-14'),
+('BOT_05','BotCinque','Filano','Cinque','','bot5@test.com','hash_finto',0,0,0,0,0,'2026-01-14');
 /*!40000 ALTER TABLE `utenti` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1347,4 +1422,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-19  2:00:03
+-- Dump completed on 2026-01-15  2:00:02
