@@ -108,21 +108,21 @@ if (isset($_SESSION['codice_utente']) && isset($pdo)) {
 
                     <div id="dropdownNotifiche" class="dropdown_content notifications">
                         
-                        <div class="notifica-header-title">Nuove Notifiche</div>
+                        <div class="notifica_header_title">Nuove Notifiche</div>
 
                         <?php if (count($lista_notifiche) > 0): ?>
                             <?php foreach ($lista_notifiche as $notifica): ?>
-                                <div class="notifica-row">
+                                <div class="notifica_row">
                                     <a href="<?= $path ?>notifiche" class="notifica-link-content">
-                                        <span class="n-titolo"><?= htmlspecialchars($notifica['titolo']) ?></span>
-                                        <span class="n-preview"><?= htmlspecialchars($notifica['messaggio']) ?></span>
-                                        <span class="n-data"><?= date('d/m H:i', strtotime($notifica['dataora_invio'])) ?></span>
+                                        <span class="notifica_titolo"><?= htmlspecialchars($notifica['titolo']) ?></span>
+                                        <span class="nnotifica_preview"><?= htmlspecialchars($notifica['messaggio']) ?></span>
+                                        <span class="notifica_data"><?= date('d/m H:i', strtotime($notifica['dataora_invio'])) ?></span>
                                     </a>
 
                                     <form action="" method="POST" class="form-close-notifica">
                                         <input type="hidden" name="azione" value="segna_singola">
                                         <input type="hidden" name="id_notifica" value="<?= $notifica['id_notifica'] ?>">
-                                        <button type="submit" class="btn-close-notifica" title="Segna come letta">&times;</button>
+                                        <button type="submit" class="notifica_btn_close" title="Segna come letta">&times;</button>
                                     </form>
                                 </div>
                             <?php endforeach; ?>
@@ -132,13 +132,13 @@ if (isset($_SESSION['codice_utente']) && isset($pdo)) {
                             </div>
                         <?php endif; ?>
                         
-                        <div class="notifica-footer">
+                        <div class="notifica_footer">
                             <a href="<?= $path ?>notifiche" class="link-mostra-tutte">Mostra tutte</a>
                             
                             <?php if (count($lista_notifiche) > 0): ?>
                                 <form action="" method="POST" style="margin:0;">
                                     <input type="hidden" name="azione" value="segna_tutte">
-                                    <button type="submit" class="btn-clean-all" title="Segna tutte come lette">
+                                    <button type="submit" class="notifica_btn_clean" title="Segna tutte come lette">
                                         &#10003; Pulisci
                                     </button>
                                 </form>
