@@ -328,11 +328,11 @@ if (isset($uid) && $uid) {
     }
 }
 function badgeIconHtmlProfile(array $badge) {
-    $icon = $badge['icona'] ?? '';
+    $icon = $badge['icona'] ?? null;
     // Primo tentativo: file in public/badges/
     $localPath = "../public/assets/badge/" . $icon. '.png';
     $webPath = "./public/assets/badge/" . $icon . '.png';
-    if ($icon && file_exists($webPath)) {
+    if ($icon) {
         return '<img src="' . htmlspecialchars($webPath) . '" alt="' . htmlspecialchars($badge['nome']) . '" style="width:72px;height:72px;object-fit:contain;border-radius:8px;">';
     }
     // Non uso SVG inline qui per sicurezza — fallback lettera
