@@ -31,13 +31,6 @@ if(isset($_POST["logout"])){
 }
 ?>
 
-<style>
-    /* FIX IMMAGINE PROFILO NAVBAR */
-
-
-
-</style>
-
 <nav class="navbar">
     <div class="navbar_left">
         <a href="<?= $path ?>" class="navbar_link_img instrument-sans-semibold" id="navbar_logo">
