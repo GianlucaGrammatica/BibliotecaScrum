@@ -250,7 +250,7 @@ $stm = $pdo->prepare("
 $stm->execute([$uid]);
 $libri_letti = $stm->fetchAll(PDO::FETCH_ASSOC);
 
-/* ---- STATISTICHE AGGIORNATE CON MEDIA CORRETTA ---- */
+/* ---- COBRA  STATISTICHE AGGIORNATE CON MEDIA CORRETTA ---- */
 $totale_libri_letti = count($libri_letti);
 $stm = $pdo->prepare("SELECT MIN(data_restituzione) as inizio, MAX(data_restituzione) as fine FROM prestiti WHERE codice_alfanumerico = ? AND data_restituzione IS NOT NULL");
 $stm->execute([$uid]);
