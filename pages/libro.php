@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
          exit;
     }
 
-    // 1. PRENOTAZIONE COPIA
+    // 1. PRENOTAZIONE COPIA (LOGICA AGGIORNATA PER CODA/ASSEGNAZIONE IMMEDIATA)
     if (isset($_POST['action']) && $_POST['action'] === 'prenota_copia') {
         $id_copia_target = filter_input(INPUT_POST, 'id_copia', FILTER_VALIDATE_INT);
 
@@ -66,32 +66,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     exit;
                 }
 
-                // B. Controllo se la SPECIFICA copia è libera (né in prestito a nessuno, né prenotata da nessuno)
-                $stmt_availability = $pdo->prepare("
-                    SELECT 
-                        (SELECT 1 FROM prestiti WHERE id_copia = :id_copia AND data_restituzione IS NULL) as is_loaned,
-                        (SELECT 1 FROM prenotazioni WHERE id_copia = :id_copia AND data_assegnazione IS NULL) as is_reserved
-                ");
-                $stmt_availability->execute(['id_copia' => $id_copia_target]);
-                $status = $stmt_availability->fetch(PDO::FETCH_ASSOC);
-
-                if ($status['is_loaned'] || $status['is_reserved']) {
-                    // Controlliamo se è prenotata proprio dall'utente corrente (caso raro refresh)
-                    $chk_self = $pdo->prepare("SELECT 1 FROM prenotazioni WHERE id_copia = ? AND codice_alfanumerico = ? AND data_assegnazione IS NULL");
-                    $chk_self->execute([$id_copia_target, $uid]);
-                    
-                    if ($chk_self->rowCount() > 0) {
-                        $pdo->rollBack();
-                        header("Location: ./libro?isbn=" . $isbn . "&status=already_reserved_this");
-                        exit;
-                    } else {
-                        $pdo->rollBack();
-                        header("Location: ./libro?isbn=" . $isbn . "&status=copy_taken"); // Qualcun altro l'ha presa
-                        exit;
-                    }
+                // B. Controllo se l'utente è già in coda o assegnato per QUESTA copia specifica
+                $chk_self = $pdo->prepare("SELECT 1 FROM prenotazioni WHERE id_copia = ? AND codice_alfanumerico = ?");
+                $chk_self->execute([$id_copia_target, $uid]);
+                
+                if ($chk_self->rowCount() > 0) {
+                    $pdo->rollBack();
+                    header("Location: ./libro?isbn=" . $isbn . "&status=already_reserved_this");
+                    exit;
                 }
 
                 // C. Pulizia: Rimuovi eventuali altre prenotazioni attive di QUESTO utente per QUESTO isbn (switch copia)
+                // Nota: Rimuove solo prenotazioni dove NON è ancora stato assegnato il libro (data_assegnazione NULL)
+                // Se ha già il libro assegnato pronto al ritiro, non glielo togliamo automaticamente.
                 $stmt_cleanup = $pdo->prepare("
                     DELETE p FROM prenotazioni p 
                     INNER JOIN copie c ON p.id_copia = c.id_copia 
@@ -101,24 +88,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ");
                 $stmt_cleanup->execute(['uid' => $uid, 'isbn' => $isbn]);
 
-                // D. Inserisci la nuova prenotazione
-                $stmt_ins = $pdo->prepare("INSERT INTO prenotazioni (codice_alfanumerico, id_copia, data_prenotazione) VALUES (:uid, :id_copia, CURDATE())");
-                $stmt_ins->execute(['uid' => $uid, 'id_copia' => $id_copia_target]);
+                // D. Controllo Disponibilità Reale per Assegnazione Immediata vs Coda
+                // Una copia è "occupata" se:
+                // 1. È in prestito (prestiti senza data restituzione)
+                // 2. È già assegnata a qualcuno (prenotazioni con data_assegnazione NOT NULL)
+                // 3. C'è già una coda di attesa (prenotazioni con data_assegnazione NULL)
+                $stmt_status = $pdo->prepare("
+                    SELECT 
+                        (SELECT 1 FROM prestiti WHERE id_copia = :id_copia AND data_restituzione IS NULL) as is_loaned,
+                        (SELECT 1 FROM prenotazioni WHERE id_copia = :id_copia AND data_assegnazione IS NOT NULL) as is_assigned,
+                        (SELECT 1 FROM prenotazioni WHERE id_copia = :id_copia AND data_assegnazione IS NULL) as has_queue
+                ");
+                $stmt_status->execute(['id_copia' => $id_copia_target]);
+                $status = $stmt_status->fetch(PDO::FETCH_ASSOC);
+
+                $is_busy = ($status['is_loaned'] || $status['is_assigned'] || $status['has_queue']);
+                
+                // Se occupata -> data_assegnazione NULL (Coda)
+                // Se libera -> data_assegnazione CURDATE() (Assegnata subito per 2gg)
+                $data_assegnazione = $is_busy ? null : date('Y-m-d');
+
+                // E. Inserisci la prenotazione
+                $stmt_ins = $pdo->prepare("INSERT INTO prenotazioni (codice_alfanumerico, id_copia, data_prenotazione, data_assegnazione) VALUES (:uid, :id_copia, CURDATE(), :da)");
+                $stmt_ins->execute(['uid' => $uid, 'id_copia' => $id_copia_target, 'da' => $data_assegnazione]);
                 
                 $pdo->commit();
-                header("Location: ./libro?isbn=" . $isbn . "&status=reserved_success");
+
+                // Redirect in base all'esito
+                if ($is_busy) {
+                    header("Location: ./libro?isbn=" . $isbn . "&status=queue_joined");
+                } else {
+                    header("Location: ./libro?isbn=" . $isbn . "&status=reserved_success");
+                }
                 exit;
 
             } catch (PDOException $e) {
                 if ($pdo->inTransaction()) $pdo->rollBack();
-                // Log $e->getMessage();
                 header("Location: ./libro?isbn=" . $isbn . "&status=error");
                 exit;
             }
         }
     }
 
-    // 2. RECENSIONI (Invariato nella logica, solo DB check)
+    // 2. RECENSIONI
     if (isset($_POST['submit_review'])) {
         $voto = filter_input(INPUT_POST, 'voto', FILTER_VALIDATE_INT);
         $raw_commento = $_POST['commento'] ?? '';
@@ -168,15 +180,16 @@ if (isset($_GET['status'])) {
         case 'toolong': $server_message = "Commento troppo lungo."; break;
         case 'invalid': $server_message = "Compila tutti i campi."; break;
         case 'error': $server_message = "Errore di sistema."; break;
-        case 'reserved_success': $server_message = "Prenotazione effettuata! Hai 48h per ritirarlo."; break;
+        case 'reserved_success': $server_message = "Prenotazione Confermata! Hai 48h per ritirare il libro."; break;
+        case 'queue_joined': $server_message = "Sei stato aggiunto alla coda. Ti avviseremo quando sarà il tuo turno."; break;
         case 'already_reserved_this': $server_message = "Hai già una prenotazione attiva per questa copia."; break;
-        case 'copy_taken': $server_message = "Ops! Questa copia è stata appena presa o prenotata da qualcun altro."; break;
         case 'loan_active_error': $server_message = "Hai già questo libro in prestito! Restituiscilo prima di prenderne un altro."; break;
     }
 }
 
 try {
-    // 1. INFO LIBRO & CONTEGGIO DISPONIBILITÀ (Esclude Prestiti attivi E Prenotazioni attive)
+    // 1. INFO LIBRO & CONTEGGIO DISPONIBILITÀ
+    // Calcolo "numero_copie_disponibili" solo quelle VERAMENTE libere (no prestito, no assegnate)
     $stmt = $pdo->prepare("
         SELECT l.*, 
             (SELECT editore FROM copie c WHERE c.isbn = l.isbn LIMIT 1) as editore_temp, 
@@ -184,7 +197,7 @@ try {
              FROM copie c 
              WHERE c.isbn = l.isbn 
              AND c.id_copia NOT IN (SELECT id_copia FROM prestiti WHERE data_restituzione IS NULL)
-             AND c.id_copia NOT IN (SELECT id_copia FROM prenotazioni WHERE data_assegnazione IS NULL)
+             AND c.id_copia NOT IN (SELECT id_copia FROM prenotazioni WHERE data_assegnazione IS NOT NULL)
             ) as numero_copie_disponibili 
         FROM libri l 
         WHERE l.isbn = ?
@@ -245,29 +258,31 @@ try {
         $lista_biblioteche = $stmt_bib->fetchAll(PDO::FETCH_ASSOC);
 
         // Lista Copie Dettagliata
-        // La colonna 'in_prestito' vale 1 se c'è un prestito attivo O una prenotazione attiva
+        // Logica: Una copia è "occupata" (is_busy) se in prestito O assegnata.
+        // Recuperiamo anche la lunghezza della coda (prenotazioni non assegnate).
         $sqlCopie = "
             SELECT 
                 c.id_copia, c.condizione, c.anno_edizione, c.id_biblioteca, 
                 b.nome as nome_biblioteca, b.indirizzo as indirizzo_biblioteca, b.lat, b.lon, 
                 (CASE 
                     WHEN EXISTS (SELECT 1 FROM prestiti p WHERE p.id_copia = c.id_copia AND p.data_restituzione IS NULL) THEN 1
-                    WHEN EXISTS (SELECT 1 FROM prenotazioni pren WHERE pren.id_copia = c.id_copia AND pren.data_assegnazione IS NULL) THEN 1
+                    WHEN EXISTS (SELECT 1 FROM prenotazioni pren WHERE pren.id_copia = c.id_copia AND pren.data_assegnazione IS NOT NULL) THEN 1
                     ELSE 0 
-                END) as in_prestito, 
+                END) as is_busy, 
+                (SELECT COUNT(*) FROM prenotazioni q WHERE q.id_copia = c.id_copia AND q.data_assegnazione IS NULL) as queue_length,
                 (SELECT COUNT(*) FROM prestiti p2 WHERE p2.id_copia = c.id_copia AND p2.codice_alfanumerico = :uid AND p2.data_restituzione IS NULL) as user_has_loan, 
-                (SELECT COUNT(*) FROM prenotazioni r2 WHERE r2.id_copia = c.id_copia AND r2.codice_alfanumerico = :uid AND r2.data_assegnazione IS NULL) as user_has_res 
+                (SELECT COUNT(*) FROM prenotazioni r2 WHERE r2.id_copia = c.id_copia AND r2.codice_alfanumerico = :uid) as user_has_res 
             FROM copie c 
             JOIN biblioteche b ON c.id_biblioteca = b.id 
             WHERE c.isbn = :isbn 
-            ORDER BY in_prestito ASC, c.condizione DESC, b.nome ASC
+            ORDER BY is_busy ASC, c.condizione DESC, b.nome ASC
         ";
         $stmt_c = $pdo->prepare($sqlCopie);
         $stmt_c->execute(['isbn' => $isbn, 'uid' => $query_uid]);
         $elenco_copie_dettagliato = $stmt_c->fetchAll(PDO::FETCH_ASSOC);
 
         foreach($elenco_copie_dettagliato as $ec) {
-            if ($ec['in_prestito'] == 0) {
+            if ($ec['is_busy'] == 0) {
                 if (!in_array($ec['id_biblioteca'], $ids_disponibili)) $ids_disponibili[] = $ec['id_biblioteca'];
             } else {
                 if (!in_array($ec['id_biblioteca'], $ids_in_prestito)) $ids_in_prestito[] = $ec['id_biblioteca'];
@@ -552,14 +567,16 @@ $title = $libro['titolo'] ?? 'Libro';
         
         for (let i = displayedCount; i < nextLimit; i++) {
             const copy = allCopies[i];
-            const isUnavailable = copy.in_prestito == 1; // 1 significa IN PRESTITO oppure PRENOTATO da altri
+            const isBusy = copy.is_busy == 1; // Occupato (Prestito o Assegnato)
             const isUserLoan = copy.user_has_loan == 1;
             const isUserRes = copy.user_has_res == 1;
+            const queueLen = copy.queue_length + 1;
             
             let btnText = "Prenota";
             let btnClass = "btn_prenota";
             let btnDisabledAttr = "";
             let tooltipText = "";
+            let btnStyle = "";
 
             if (isUserLoan) {
                 btnText = "In tuo possesso";
@@ -574,20 +591,20 @@ $title = $libro['titolo'] ?? 'Libro';
                 tooltipText = "Hai già una copia di questo libro in prestito.";
             }
             else if (isUserRes) {
-                btnText = "Prenotato";
+                btnText = "Già in lista";
                 btnClass += " btn_disabled";
                 btnDisabledAttr = "disabled";
-                tooltipText = "Hai già una prenotazione attiva per questa copia";
+                tooltipText = "Hai già una prenotazione/coda attiva per questa copia";
             } 
-            else if (isUnavailable) {
-                btnText = "Non disponibile";
-                btnClass += " btn_disabled";
-                btnDisabledAttr = "disabled";
-                tooltipText = "Copia attualmente in prestito o già prenotata";
+            else if (isBusy) {
+                // MODIFICA CODA: Se occupato, attivo bottone Coda
+                btnText = "Mettiti in Coda";
+                btnStyle = 'background-color: #f39c12;'; // Arancione/Giallo per coda
+                tooltipText = "Copia occupata. Persone in attesa prima di te: " + queueLen;
             }
 
-            const statusBadge = isUnavailable 
-                ? '<span style="color:#f39c12; font-weight:bold; margin-right:10px;">&#9679; In Uso / Prenotato</span>'
+            const statusBadge = isBusy 
+                ? '<span style="color:#f39c12; font-weight:bold; margin-right:10px;">&#9679; Occupato (' + queueLen + ' in coda)</span>'
                 : '<span style="color:#27ae60; font-weight:bold; margin-right:10px;">&#9679; Disponibile</span>';
 
             const condBar = renderCondBar(parseInt(copy.condizione));
@@ -627,7 +644,7 @@ $title = $libro['titolo'] ?? 'Libro';
                     <form method="POST" action="./libro?isbn=<?= $isbn ?>">
                         <input type="hidden" name="action" value="prenota_copia">
                         <input type="hidden" name="id_copia" value="${copy.id_copia}">
-                        <button type="submit" class="${btnClass}" ${btnDisabledAttr}>${btnText}</button>
+                        <button type="submit" class="${btnClass}" ${btnDisabledAttr} style="${btnStyle}">${btnText}</button>
                     </form>
                     ${tooltipHtml}
                 </div>
