@@ -220,7 +220,8 @@ require_once './src/includes/navbar.php';
     </div>
 
     <script>
-        function hideLoader() {
+        // JS per il Loading Screen
+        window.addEventListener('load', function() {
             const loader = document.getElementById('loading_overlay');
             if (loader) {
                 loader.style.opacity = '0';
@@ -228,13 +229,7 @@ require_once './src/includes/navbar.php';
                     loader.style.display = 'none';
                 }, 500);
             }
-        }
-
-        document.addEventListener('DOMContentLoaded', hideLoader);
-
-        window.addEventListener('load', hideLoader);
-
-        setTimeout(hideLoader, 3000);
+        });
     </script>
 
 <?php require_once './src/includes/footer.php'; ?>
