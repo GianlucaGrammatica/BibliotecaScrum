@@ -29,7 +29,7 @@ if (isset($pdo)) {
             LEFT JOIN multe m ON rb.codice_alfanumerico = m.codice_alfanumerico
             GROUP BY rb.id_richiesta, rb.codice_alfanumerico, rb.tipo_richiesta, 
                      rb.id_copia, rb.data_richiesta, rb.data_scadenza_richiesta, rb.stato
-            ORDER BY rb.data_richiesta DESC
+            ORDER BY rb.id_richiesta DESC
         ");
         $stmt->execute();
         $richieste = $stmt->fetchAll(PDO::FETCH_ASSOC);
