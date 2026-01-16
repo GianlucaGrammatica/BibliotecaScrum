@@ -1,15 +1,11 @@
 <?php
-
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
+if (session_status() === PHP_SESSION_NONE) session_start();
 require_once 'db_config.php';
 
 $MAX_CHARS = 1000;
 
 $messaggio_db = "";
-$server_message = ""; 
+$server_message = "";
 $libro = null;
 $autori = [];
 $categorie = [];
@@ -19,284 +15,217 @@ $mediaVoto = 0;
 $totaleRecensioni = 0;
 
 $lista_biblioteche = [];
-$ids_disponibili = []; 
+$ids_disponibili = [];
 $ids_in_prestito = [];
-$elenco_copie_dettagliato = []; 
-
-$userHasAnyLoan = false; 
+$elenco_copie_dettagliato = [];
+$userHasAnyLoan = false;
 
 $isbn = $_GET['isbn'] ?? null;
 $uid = $_SESSION['codice_utente'] ?? null;
 $query_uid = $uid ? $uid : 'GUEST';
 
-if (!$isbn) {
-    die("<h1>Errore</h1><p>ISBN non specificato.</p>");
-}
+if (!$isbn) die("<h1>Errore</h1><p>ISBN non specificato.</p>");
 
-// --- GESTIONE AZIONI POST ---
+// --- Gestione POST (prenotazioni e recensioni) ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    
     if (!$uid) {
-         header("Location: ./libro?isbn=" . $isbn . "&status=login_needed");
-         exit;
+        header("Location: ./libro?isbn=" . $isbn . "&status=login_needed"); exit;
     }
 
-    // 1. PRENOTAZIONE COPIA
+    // PRENOTAZIONE COPIA
     if (isset($_POST['action']) && $_POST['action'] === 'prenota_copia') {
         $id_copia_target = filter_input(INPUT_POST, 'id_copia', FILTER_VALIDATE_INT);
-
         if ($id_copia_target) {
             try {
                 $pdo->beginTransaction();
 
-                // A. Controllo se l'utente ha già UNA copia di questo libro in prestito (non restituita)
                 $stmt_loan_check = $pdo->prepare("
                     SELECT 1 
                     FROM prestiti p 
                     JOIN copie c ON p.id_copia = c.id_copia 
-                    WHERE p.codice_alfanumerico = :uid 
-                    AND c.isbn = :isbn 
-                    AND p.data_restituzione IS NULL
+                    WHERE p.codice_alfanumerico = :uid AND c.isbn = :isbn AND p.data_restituzione IS NULL
                 ");
-                $stmt_loan_check->execute(['uid' => $uid, 'isbn' => $isbn]);
+                $stmt_loan_check->execute(['uid'=>$uid,'isbn'=>$isbn]);
+                if ($stmt_loan_check->rowCount()>0) { $pdo->rollBack(); header("Location: ./libro?isbn=$isbn&status=loan_active_error"); exit; }
 
-                if ($stmt_loan_check->rowCount() > 0) {
-                    $pdo->rollBack();
-                    header("Location: ./libro?isbn=" . $isbn . "&status=loan_active_error");
-                    exit;
-                }
-
-                // B. Controllo se la SPECIFICA copia è libera (né in prestito a nessuno, né prenotata da nessuno)
                 $stmt_availability = $pdo->prepare("
-                    SELECT 
-                        (SELECT 1 FROM prestiti WHERE id_copia = :id_copia AND data_restituzione IS NULL) as is_loaned,
-                        (SELECT 1 FROM prenotazioni WHERE id_copia = :id_copia AND data_assegnazione IS NULL) as is_reserved
+                    SELECT (SELECT 1 FROM prestiti WHERE id_copia = :id_copia AND data_restituzione IS NULL) as is_loaned,
+                           (SELECT 1 FROM prenotazioni WHERE id_copia = :id_copia AND data_assegnazione IS NULL) as is_reserved
                 ");
-                $stmt_availability->execute(['id_copia' => $id_copia_target]);
+                $stmt_availability->execute(['id_copia'=>$id_copia_target]);
                 $status = $stmt_availability->fetch(PDO::FETCH_ASSOC);
 
                 if ($status['is_loaned'] || $status['is_reserved']) {
-                    // Controlliamo se è prenotata proprio dall'utente corrente (caso raro refresh)
-                    $chk_self = $pdo->prepare("SELECT 1 FROM prenotazioni WHERE id_copia = ? AND codice_alfanumerico = ? AND data_assegnazione IS NULL");
-                    $chk_self->execute([$id_copia_target, $uid]);
-                    
-                    if ($chk_self->rowCount() > 0) {
-                        $pdo->rollBack();
-                        header("Location: ./libro?isbn=" . $isbn . "&status=already_reserved_this");
-                        exit;
-                    } else {
-                        $pdo->rollBack();
-                        header("Location: ./libro?isbn=" . $isbn . "&status=copy_taken"); // Qualcun altro l'ha presa
-                        exit;
-                    }
+                    $chk_self = $pdo->prepare("SELECT 1 FROM prenotazioni WHERE id_copia=? AND codice_alfanumerico=? AND data_assegnazione IS NULL");
+                    $chk_self->execute([$id_copia_target,$uid]);
+                    $pdo->rollBack();
+                    header("Location: ./libro?isbn=$isbn&status=".($chk_self->rowCount()>0 ? "already_reserved_this":"copy_taken")); exit;
                 }
 
-                // C. Pulizia: Rimuovi eventuali altre prenotazioni attive di QUESTO utente per QUESTO isbn (switch copia)
                 $stmt_cleanup = $pdo->prepare("
                     DELETE p FROM prenotazioni p 
-                    INNER JOIN copie c ON p.id_copia = c.id_copia 
-                    WHERE p.codice_alfanumerico = :uid 
-                    AND c.isbn = :isbn 
-                    AND p.data_assegnazione IS NULL
+                    INNER JOIN copie c ON p.id_copia=c.id_copia 
+                    WHERE p.codice_alfanumerico=:uid AND c.isbn=:isbn AND p.data_assegnazione IS NULL
                 ");
-                $stmt_cleanup->execute(['uid' => $uid, 'isbn' => $isbn]);
+                $stmt_cleanup->execute(['uid'=>$uid,'isbn'=>$isbn]);
 
-                // D. Inserisci la nuova prenotazione
                 $stmt_ins = $pdo->prepare("INSERT INTO prenotazioni (codice_alfanumerico, id_copia, data_prenotazione) VALUES (:uid, :id_copia, CURDATE())");
-                $stmt_ins->execute(['uid' => $uid, 'id_copia' => $id_copia_target]);
-                
-                $pdo->commit();
-                header("Location: ./libro?isbn=" . $isbn . "&status=reserved_success");
-                exit;
+                $stmt_ins->execute(['uid'=>$uid,'id_copia'=>$id_copia_target]);
 
-            } catch (PDOException $e) {
-                if ($pdo->inTransaction()) $pdo->rollBack();
-                // Log $e->getMessage();
-                header("Location: ./libro?isbn=" . $isbn . "&status=error");
-                exit;
+                $pdo->commit();
+                header("Location: ./libro?isbn=$isbn&status=reserved_success"); exit;
+
+            } catch(PDOException $e) {
+                if($pdo->inTransaction()) $pdo->rollBack();
+                header("Location: ./libro?isbn=$isbn&status=error"); exit;
             }
         }
     }
 
-    // 2. RECENSIONI (Invariato nella logica, solo DB check)
+    // RECENSIONI
     if (isset($_POST['submit_review'])) {
-        $voto = filter_input(INPUT_POST, 'voto', FILTER_VALIDATE_INT);
-        $raw_commento = $_POST['commento'] ?? '';
-        $commento = trim(filter_var($raw_commento, FILTER_SANITIZE_STRING));
+        $voto = filter_input(INPUT_POST,'voto',FILTER_VALIDATE_INT);
+        $commento = trim(filter_var($_POST['commento'] ?? '', FILTER_SANITIZE_STRING));
         $mode = $_POST['mode'] ?? 'insert';
 
-        if (strlen($commento) > $MAX_CHARS) {
-             header("Location: ./libro?isbn=" . $isbn . "&status=toolong");
-             exit;
-        } elseif ($voto < 1 || $voto > 5 || empty($commento)) {
-             header("Location: ./libro?isbn=" . $isbn . "&status=invalid");
-             exit;
-        } else {
+        if (strlen($commento)>$MAX_CHARS) { header("Location: ./libro?isbn=$isbn&status=toolong"); exit; }
+        elseif ($voto<1||$voto>5||empty($commento)) { header("Location: ./libro?isbn=$isbn&status=invalid"); exit; }
+        else {
             try {
-                if ($mode === 'update') {
-                    $stmt = $pdo->prepare("UPDATE recensioni SET voto = ?, commento = ?, data_commento = NOW() WHERE isbn = ? AND codice_alfanumerico = ?");
-                    $stmt->execute([$voto, $commento, $isbn, $uid]);
-                    $msg_type = "updated";
+                if($mode==='update'){
+                    $stmt=$pdo->prepare("UPDATE recensioni SET voto=?, commento=?, data_commento=NOW() WHERE isbn=? AND codice_alfanumerico=?");
+                    $stmt->execute([$voto,$commento,$isbn,$uid]); $msg_type="updated";
                 } else {
-                    $chk = $pdo->prepare("SELECT 1 FROM recensioni WHERE isbn = ? AND codice_alfanumerico = ?");
-                    $chk->execute([$isbn, $uid]);
+                    $chk=$pdo->prepare("SELECT 1 FROM recensioni WHERE isbn=? AND codice_alfanumerico=?");
+                    $chk->execute([$isbn,$uid]);
                     if (!$chk->fetch()) {
-                        $stmt = $pdo->prepare("INSERT INTO recensioni (isbn, codice_alfanumerico, voto, commento, data_commento) VALUES (?, ?, ?, ?, NOW())");
-                        $stmt->execute([$isbn, $uid, $voto, $commento]);
-                        $msg_type = "created";
-                    } else {
-                        $msg_type = "exists";
-                    }
+                        $stmt=$pdo->prepare("INSERT INTO recensioni (isbn,codice_alfanumerico,voto,commento,data_commento) VALUES(?,?,?,?,NOW())");
+                        $stmt->execute([$isbn,$uid,$voto,$commento]); $msg_type="created";
+                    } else $msg_type="exists";
                 }
-                header("Location: ./libro?isbn=" . $isbn . "&status=" . $msg_type);
-                exit;
-            } catch (PDOException $e) {
-                header("Location: ./libro?isbn=" . $isbn . "&status=error");
-                exit;
+                header("Location: ./libro?isbn=$isbn&status=$msg_type"); exit;
+            } catch(PDOException $e){
+                header("Location: ./libro?isbn=$isbn&status=error"); exit;
             }
         }
     }
 }
 
-// --- MESSAGGI STATO ---
-if (isset($_GET['status'])) {
-    switch ($_GET['status']) {
-        case 'created': $server_message = "Recensione pubblicata con successo!"; break;
-        case 'updated': $server_message = "Recensione aggiornata!"; break;
-        case 'exists': $server_message = "Hai già recensito questo libro."; break;
-        case 'login_needed': $server_message = "Devi accedere per eseguire l'operazione."; break;
-        case 'toolong': $server_message = "Commento troppo lungo."; break;
-        case 'invalid': $server_message = "Compila tutti i campi."; break;
-        case 'error': $server_message = "Errore di sistema."; break;
-        case 'reserved_success': $server_message = "Prenotazione effettuata! Hai 48h per ritirarlo."; break;
-        case 'already_reserved_this': $server_message = "Hai già una prenotazione attiva per questa copia."; break;
-        case 'copy_taken': $server_message = "Ops! Questa copia è stata appena presa o prenotata da qualcun altro."; break;
-        case 'loan_active_error': $server_message = "Hai già questo libro in prestito! Restituiscilo prima di prenderne un altro."; break;
-    }
-}
+// --- Messaggi stato ---
+$status_map = [
+        'created'=>"Recensione pubblicata con successo!",
+        'updated'=>"Recensione aggiornata!",
+        'exists'=>"Hai già recensito questo libro.",
+        'login_needed'=>"Devi accedere per eseguire l'operazione.",
+        'toolong'=>"Commento troppo lungo.",
+        'invalid'=>"Compila tutti i campi.",
+        'error'=>"Errore di sistema.",
+        'reserved_success'=>"Prenotazione effettuata! Hai 48h per ritirarlo.",
+        'already_reserved_this'=>"Hai già una prenotazione attiva per questa copia.",
+        'copy_taken'=>"Ops! Questa copia è stata appena presa o prenotata da qualcun altro.",
+        'loan_active_error'=>"Hai già questo libro in prestito! Restituiscilo prima di prenderne un altro."
+];
+$server_message = $_GET['status'] ?? '';
+$server_message = $status_map[$server_message] ?? '';
 
+// --- Recupero dati libro ---
 try {
-    // 1. INFO LIBRO & CONTEGGIO DISPONIBILITÀ (Esclude Prestiti attivi E Prenotazioni attive)
-    $stmt = $pdo->prepare("
-        SELECT l.*, 
-            (SELECT editore FROM copie c WHERE c.isbn = l.isbn LIMIT 1) as editore_temp, 
-            (SELECT COUNT(*) 
-             FROM copie c 
-             WHERE c.isbn = l.isbn 
-             AND c.id_copia NOT IN (SELECT id_copia FROM prestiti WHERE data_restituzione IS NULL)
-             AND c.id_copia NOT IN (SELECT id_copia FROM prenotazioni WHERE data_assegnazione IS NULL)
-            ) as numero_copie_disponibili 
-        FROM libri l 
-        WHERE l.isbn = ?
-    ");
-    $stmt->execute([$isbn]);
-    $libro = $stmt->fetch(PDO::FETCH_ASSOC);
+    $stmt = $pdo->prepare("SELECT l.*, (SELECT editore FROM copie c WHERE c.isbn=l.isbn LIMIT 1) as editore_temp,
+        (SELECT COUNT(*) FROM copie c WHERE c.isbn=l.isbn 
+         AND c.id_copia NOT IN (SELECT id_copia FROM prestiti WHERE data_restituzione IS NULL)
+         AND c.id_copia NOT IN (SELECT id_copia FROM prenotazioni WHERE data_assegnazione IS NULL)) as numero_copie_disponibili
+        FROM libri l WHERE l.isbn=?");
+    $stmt->execute([$isbn]); $libro = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($libro) $libro['editore'] = $libro['editore_temp'] ?? 'N/D';
 
-    if ($libro) {
-        $libro['editore'] = $libro['editore_temp'] ?? 'N/D';
+    // Autori e categorie
+    $stmt = $pdo->prepare("SELECT a.nome, a.cognome FROM autori a JOIN autore_libro al ON al.id_autore=a.id_autore WHERE al.isbn=?");
+    $stmt->execute([$isbn]); $autori = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $stmt = $pdo->prepare("SELECT c.categoria FROM categorie c JOIN libro_categoria lc ON lc.id_categoria=c.id_categoria WHERE lc.isbn=?");
+    $stmt->execute([$isbn]); $categorie = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
-        // Autori e Categorie
-        $stmt = $pdo->prepare("SELECT a.nome, a.cognome FROM autori a JOIN autore_libro al ON al.id_autore = a.id_autore WHERE al.isbn = ?");
-        $stmt->execute([$isbn]);
-        $autori = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // Statistiche recensioni
+    $stmt = $pdo->prepare("SELECT CAST(AVG(voto) AS DECIMAL(3,1)) as media, COUNT(*) as totale FROM recensioni WHERE isbn=?");
+    $stmt->execute([$isbn]); $stats = $stmt->fetch(PDO::FETCH_ASSOC);
+    $mediaVoto = $stats['media'] ? number_format((float)$stats['media'],1) : 0;
+    $totaleRecensioni = $stats['totale'];
 
-        $stmt = $pdo->prepare("SELECT categoria FROM categorie c JOIN libro_categoria lc ON lc.id_categoria = c.id_categoria WHERE lc.isbn = ?");
-        $stmt->execute([$isbn]);
-        $categorie = $stmt->fetchAll(PDO::FETCH_COLUMN);
-
-        // Stats Recensioni
-        $stmt = $pdo->prepare("SELECT CAST(AVG(voto) AS DECIMAL(3,1)) as media, COUNT(*) as totale FROM recensioni WHERE isbn = ?");
-        $stmt->execute([$isbn]);
-        $stats = $stmt->fetch(PDO::FETCH_ASSOC);
-        $mediaVoto = $stats['media'] ? number_format((float)$stats['media'], 1) : 0;
-        $totaleRecensioni = $stats['totale'];
-
-        // Recensione Utente e controllo "Ha Letto"
-        if ($uid) {
-            $stmt = $pdo->prepare("
-                SELECT r.*, u.username, u.codice_alfanumerico as id_recensore, 
-                (SELECT 1 FROM prestiti p JOIN copie c ON p.id_copia = c.id_copia WHERE p.codice_alfanumerico = u.codice_alfanumerico AND c.isbn = r.isbn LIMIT 1) as ha_letto 
-                FROM recensioni r 
-                JOIN utenti u ON r.codice_alfanumerico = u.codice_alfanumerico 
-                WHERE r.isbn = ? AND r.codice_alfanumerico = ?
-            ");
-            $stmt->execute([$isbn, $uid]);
-            $mia_recensione = $stmt->fetch(PDO::FETCH_ASSOC);
-        }
-
-        // Recensioni Altri
-        $sqlAltri = "
-            SELECT r.*, u.username, u.codice_alfanumerico as id_recensore, 
-            (SELECT 1 FROM prestiti p JOIN copie c ON p.id_copia = c.id_copia WHERE p.codice_alfanumerico = u.codice_alfanumerico AND c.isbn = r.isbn LIMIT 1) as ha_letto 
-            FROM recensioni r 
-            JOIN utenti u ON r.codice_alfanumerico = u.codice_alfanumerico 
-            WHERE r.isbn = ? 
-        ";
-        if ($uid) { $sqlAltri .= " AND r.codice_alfanumerico != ? "; }
-        $sqlAltri .= " ORDER BY r.data_commento DESC";
-        
-        $stmt = $pdo->prepare($sqlAltri);
-        if ($uid) $stmt->execute([$isbn, $uid]);
-        else $stmt->execute([$isbn]);
-        $recensioni_altri = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        // Biblioteche
-        $stmt_bib = $pdo->query("SELECT id, nome, indirizzo, lat, lon, orari FROM biblioteche");
-        $lista_biblioteche = $stmt_bib->fetchAll(PDO::FETCH_ASSOC);
-
-        // Lista Copie Dettagliata
-        // La colonna 'in_prestito' vale 1 se c'è un prestito attivo O una prenotazione attiva
-        $sqlCopie = "
-            SELECT 
-                c.id_copia, c.condizione, c.anno_edizione, c.id_biblioteca, 
-                b.nome as nome_biblioteca, b.indirizzo as indirizzo_biblioteca, b.lat, b.lon, 
-                (CASE 
-                    WHEN EXISTS (SELECT 1 FROM prestiti p WHERE p.id_copia = c.id_copia AND p.data_restituzione IS NULL) THEN 1
-                    WHEN EXISTS (SELECT 1 FROM prenotazioni pren WHERE pren.id_copia = c.id_copia AND pren.data_assegnazione IS NULL) THEN 1
-                    ELSE 0 
-                END) as in_prestito, 
-                (SELECT COUNT(*) FROM prestiti p2 WHERE p2.id_copia = c.id_copia AND p2.codice_alfanumerico = :uid AND p2.data_restituzione IS NULL) as user_has_loan, 
-                (SELECT COUNT(*) FROM prenotazioni r2 WHERE r2.id_copia = c.id_copia AND r2.codice_alfanumerico = :uid AND r2.data_assegnazione IS NULL) as user_has_res 
-            FROM copie c 
-            JOIN biblioteche b ON c.id_biblioteca = b.id 
-            WHERE c.isbn = :isbn 
-            ORDER BY in_prestito ASC, c.condizione DESC, b.nome ASC
-        ";
-        $stmt_c = $pdo->prepare($sqlCopie);
-        $stmt_c->execute(['isbn' => $isbn, 'uid' => $query_uid]);
-        $elenco_copie_dettagliato = $stmt_c->fetchAll(PDO::FETCH_ASSOC);
-
-        foreach($elenco_copie_dettagliato as $ec) {
-            if ($ec['in_prestito'] == 0) {
-                if (!in_array($ec['id_biblioteca'], $ids_disponibili)) $ids_disponibili[] = $ec['id_biblioteca'];
-            } else {
-                if (!in_array($ec['id_biblioteca'], $ids_in_prestito)) $ids_in_prestito[] = $ec['id_biblioteca'];
-            }
-            if ($ec['user_has_loan'] == 1) {
-                $userHasAnyLoan = true;
-            }
-        }
-
-    } else {
-        $messaggio_db = "Libro non trovato.";
+    // Recensione utente
+    if($uid){
+        $stmt=$pdo->prepare("SELECT r.*, u.username, u.codice_alfanumerico as id_recensore,
+            (SELECT 1 FROM prestiti p JOIN copie c ON p.id_copia=c.id_copia WHERE p.codice_alfanumerico=u.codice_alfanumerico AND c.isbn=r.isbn LIMIT 1) as ha_letto
+            FROM recensioni r JOIN utenti u ON r.codice_alfanumerico=u.codice_alfanumerico WHERE r.isbn=? AND r.codice_alfanumerico=?");
+        $stmt->execute([$isbn,$uid]); $mia_recensione = $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-} catch (PDOException $e) {
-    $messaggio_db = "Errore DB: " . $e->getMessage();
-}
+    // Recensioni altri
+    $sqlAltri="SELECT r.*, u.username, u.codice_alfanumerico as id_recensore,
+        (SELECT 1 FROM prestiti p JOIN copie c ON p.id_copia=c.id_copia WHERE p.codice_alfanumerico=u.codice_alfanumerico AND c.isbn=r.isbn LIMIT 1) as ha_letto
+        FROM recensioni r JOIN utenti u ON r.codice_alfanumerico=u.codice_alfanumerico WHERE r.isbn=?";
+    if($uid) $sqlAltri.=" AND r.codice_alfanumerico!=?";
+    $sqlAltri.=" ORDER BY r.data_commento DESC";
+    $stmt=$pdo->prepare($sqlAltri);
+    if($uid) $stmt->execute([$isbn,$uid]); else $stmt->execute([$isbn]);
+    $recensioni_altri = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-function getCoverPath($isbn) {
-    $localPath = "public/bookCover/$isbn.png";
-    return file_exists($localPath) ? $localPath : "public/assets/book_placeholder.jpg";
-}
+    // Biblioteche
+    $stmt_bib=$pdo->query("SELECT id,nome,indirizzo,lat,lon,orari FROM biblioteche");
+    $lista_biblioteche=$stmt_bib->fetchAll(PDO::FETCH_ASSOC);
 
-function getPfpPath($userId) {
-    $path = "public/pfp/$userId.png";
-    return file_exists($path) ? $path . '?v=' . time() : "public/assets/base_pfp.png";
-}
+    // Copie dettagliate
+    $sqlCopie="SELECT c.id_copia, c.condizione, c.anno_edizione, c.id_biblioteca, b.nome as nome_biblioteca, b.indirizzo as indirizzo_biblioteca, b.lat, b.lon,
+        (CASE WHEN EXISTS (SELECT 1 FROM prestiti p WHERE p.id_copia=c.id_copia AND p.data_restituzione IS NULL) THEN 1
+              WHEN EXISTS (SELECT 1 FROM prenotazioni pren WHERE pren.id_copia=c.id_copia AND pren.data_assegnazione IS NULL) THEN 1
+              ELSE 0 END) as in_prestito,
+        (SELECT COUNT(*) FROM prestiti p2 WHERE p2.id_copia=c.id_copia AND p2.codice_alfanumerico=:uid AND p2.data_restituzione IS NULL) as user_has_loan,
+        (SELECT COUNT(*) FROM prenotazioni r2 WHERE r2.id_copia=c.id_copia AND r2.codice_alfanumerico=:uid AND r2.data_assegnazione IS NULL) as user_has_res
+        FROM copie c JOIN biblioteche b ON c.id_biblioteca=b.id WHERE c.isbn=:isbn ORDER BY in_prestito ASC, c.condizione DESC, b.nome ASC";
+    $stmt_c=$pdo->prepare($sqlCopie);
+    $stmt_c->execute(['isbn'=>$isbn,'uid'=>$query_uid]);
+    $elenco_copie_dettagliato=$stmt_c->fetchAll(PDO::FETCH_ASSOC);
+
+    foreach($elenco_copie_dettagliato as $ec){
+        if($ec['in_prestito']==0) $ids_disponibili[]=$ec['id_biblioteca'];
+        else $ids_in_prestito[]=$ec['id_biblioteca'];
+        if($ec['user_has_loan']==1) $userHasAnyLoan=true;
+    }
+
+    // --- NUOVA SEZIONE: "Chi ha letto questo ha letto anche..." ---
+    $consigliati = [];
+    $sqlCoocurrence = "
+        SELECT c.isbn, l.titolo, COUNT(*) as count_users
+        FROM prestiti p1
+        JOIN prestiti p2 ON p1.codice_alfanumerico=p2.codice_alfanumerico
+        JOIN copie c ON p2.id_copia=c.id_copia
+        JOIN libri l ON c.isbn=l.isbn
+        WHERE p1.id_copia IN (SELECT id_copia FROM copie WHERE isbn=:isbn) 
+        AND c.isbn != :isbn
+        AND c.isbn NOT IN (SELECT al.isbn FROM autore_libro al JOIN autore_libro al2 ON al.id_autore=al2.id_autore WHERE al2.isbn=:isbn)
+        GROUP BY c.isbn
+        ORDER BY count_users DESC
+        LIMIT 5
+    ";
+    $stmt = $pdo->prepare($sqlCoocurrence);
+    $stmt->execute(['isbn'=>$isbn]);
+    $cooc = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Calcolo percentuale
+    $totalUsersStmt = $pdo->prepare("SELECT COUNT(DISTINCT codice_alfanumerico) FROM prestiti p JOIN copie c ON p.id_copia=c.id_copia WHERE c.isbn=:isbn");
+    $totalUsersStmt->execute(['isbn'=>$isbn]);
+    $totalUsers = (int)$totalUsersStmt->fetchColumn();
+    foreach($cooc as $c) {
+        $perc = $totalUsers>0 ? round(($c['count_users']/$totalUsers)*100) : 0;
+        $consigliati[] = ['isbn'=>$c['isbn'],'titolo'=>$c['titolo'],'percent'=>$perc];
+    }
+
+} catch(PDOException $e){ $messaggio_db="Errore DB: ".$e->getMessage(); }
+
+function getCoverPath($isbn){ $localPath="public/bookCover/$isbn.png"; return file_exists($localPath)?$localPath:"public/assets/book_placeholder.jpg"; }
+function getPfpPath($userId){ $path="public/pfp/$userId.png"; return file_exists($path)?$path.'?v='.time():"public/assets/base_pfp.png"; }
+
 ?>
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <style>
@@ -349,6 +278,75 @@ function getPfpPath($userId) {
     .leaflet-pane.leaflet-popup-pane { z-index: 10000 !important; }
     .leaflet-control-resetmap { background: white; padding: 6px 10px; border-radius: 4px; border: 1px solid #888; cursor: pointer; font-size: 13px; box-shadow: 0 2px 6px rgba(0,0,0,0.2); margin-top: 5px; }
     .leaflet-control-resetmap:hover { background: #f0f0f0; }
+    .related_books_section {
+        max-width: 1100px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    .related_books_title {
+        font-family: 'Young Serif', serif;
+        color: #2c3e50;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 10px;
+        margin-bottom: 15px;
+        font-size: 1.3rem;
+    }
+
+    .related_books_list {
+        display: flex;
+        flex-wrap: nowrap; /* Non andare a capo */
+        gap: 15px;
+        overflow-x: auto;  /* Scroll orizzontale */
+        padding-bottom: 10px;
+        -webkit-overflow-scrolling: touch; /* Scroll più fluido su iOS */
+    }
+
+    .related_books_list::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    .related_books_list::-webkit-scrollbar-thumb {
+        background-color: rgba(0,0,0,0.2);
+        border-radius: 4px;
+    }
+
+    .related_book_card {
+        flex: 0 0 200px; /* Larghezza fissa per ogni card */
+        border: 1px solid #eee;
+        border-radius: 8px;
+        padding: 10px;
+        background: #fff;
+        transition: all 0.2s;
+        cursor: pointer;
+    }
+
+    .related_book_card:hover {
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        transform: translateY(-2px);
+    }
+
+    .related_book_cover {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+        border-radius: 4px;
+        margin-bottom: 8px;
+    }
+
+    .related_book_title {
+        font-weight: bold;
+        font-size: 1rem;
+        margin-bottom: 4px;
+        color: #2c3e50;
+    }
+
+    .related_book_percent {
+        font-size: 0.85rem;
+        color: #555;
+    }
+
+
 </style>
 
 <?php
@@ -428,6 +426,24 @@ $title = $libro['titolo'] ?? 'Libro';
                     <button id="load-more-copies" class="load_more_btn" style="display:none;" onclick="renderNextBatch()">Mostra altre copie</button>
                 </div>
             </div>
+            <!-- Dopo la mappa e prima delle recensioni -->
+            <div class="related_books_section">
+                <h2 class="related_books_title">Chi ha letto questo ha letto anche...</h2>
+                <?php if($consigliati): ?>
+                    <div class="related_books_list">
+                        <?php foreach($consigliati as $r): ?>
+                            <div class="related_book_card" onclick="window.location='./libro?isbn=<?= $r['isbn'] ?>'">
+                                <img src="<?= getCoverPath($r['isbn']) ?>" alt="<?= htmlspecialchars($r['titolo']) ?>" class="related_book_cover">
+                                <div class="related_book_title"><?= htmlspecialchars($r['titolo']) ?></div>
+                                <div class="related_book_percent"><?= $r['percent'] ?>% degli utenti ha letto anche questo</div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php else: ?>
+                    <p style="text-align:center; color:#888;">Nessun suggerimento disponibile per questo libro.</p>
+                <?php endif; ?>
+            </div>
+
 
             <div class="reviews_section">
                 <h2 class="reviews_title">Recensioni (<?= $totaleRecensioni ?>)</h2>
