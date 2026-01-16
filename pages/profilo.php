@@ -48,11 +48,11 @@ if (isset($_POST['ajax_livello']) && $uid) {
         $chk = $pdo->prepare("SELECT 1 FROM utenti WHERE livello_privato = ? AND codice_alfanumerico != ?");
         $chk->execute([$new_livello, $uid]);
         if ($chk->fetch()) {
-            echo json_encode(['status' => 'error', 'message' => 'Username già occupato!']);
+            echo json_encode(['status' => 'error', 'message' => 'Livello già occupato!']);
         } else {
             $upd = $pdo->prepare("UPDATE utenti SET livello_privato = ? WHERE codice_alfanumerico = ?");
             $upd->execute([$new_livello, $uid]);
-            echo json_encode(['status' => 'success', 'message' => 'Username aggiornato con successo!']);
+            echo json_encode(['status' => 'success', 'message' => 'Livello aggiornato con successo!']);
         }
     } catch (Exception $e) {
         echo json_encode(['status' => 'error', 'message' => 'Errore DB: ' . $e->getMessage()]);
