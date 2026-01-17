@@ -21,6 +21,93 @@ if (!$uid) { header("Location: ./login"); exit; }
 if (!isset($pdo)) { die('Errore connessione DB.'); }
 
 /* -----------------------------------------------------------
+   GENERAZIONE WALLET (Apple Wallet .pkpass) VIA POST
+----------------------------------------------------------- */
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'generate_wallet' && $uid) {
+    
+    $stm = $pdo->prepare("SELECT nome, cognome, codice_alfanumerico FROM utenti WHERE codice_alfanumerico = ?");
+    $stm->execute([$uid]);
+    $u = $stm->fetch(PDO::FETCH_ASSOC);
+
+    if ($u) {
+        $cert_dir = __DIR__ . '/certificates/';
+        $cert_path = $cert_dir . 'pass.pem';
+        $key_path  = $cert_dir . 'key.pem';
+        $wwdr_path = $cert_dir . 'wwdr.pem';
+
+        $pass_json = json_encode([
+            "formatVersion" => 1,
+            "passTypeIdentifier" => "pass.com.bibliotecascrum.membership", 
+            "serialNumber" => "LIB-" . $u['codice_alfanumerico'],
+            "teamIdentifier" => "YOUR_TEAM_ID",
+            "barcode" => [
+                "message" => $u['codice_alfanumerico'],
+                "format" => "PKBarcodeFormatCode128",
+                "messageEncoding" => "iso-8859-1"
+            ],
+            "organizationName" => "Biblioteca Scrum",
+            "description" => "Tessera Personale",
+            "backgroundColor" => "rgb(63, 81, 53)",
+            "foregroundColor" => "rgb(255, 255, 255)",
+            "generic" => [
+                "primaryFields" => [
+                    ["key" => "member", "label" => "SOCIO", "value" => $u['nome'] . " " . $u['cognome']]
+                ],
+                "secondaryFields" => [
+                    ["key" => "id", "label" => "ID UTENTE", "value" => $u['codice_alfanumerico']]
+                ]
+            ]
+        ]);
+
+        $work_dir = sys_get_temp_dir() . '/pkpass_' . uniqid();
+        mkdir($work_dir);
+        file_put_contents($work_dir . '/pass.json', $pass_json);
+        
+        $icon_src = __DIR__ . '/public/assets/icon.png'; 
+        if (file_exists($icon_src)) {
+            copy($icon_src, $work_dir . '/icon.png');
+            copy($icon_src, $work_dir . '/icon@2x.png');
+        }
+
+        $manifest = [];
+        foreach (scandir($work_dir) as $f) {
+            if ($f !== '.' && $f !== '..') $manifest[$f] = sha1_file($work_dir . '/' . $f);
+        }
+        file_put_contents($work_dir . '/manifest.json', json_encode($manifest));
+
+        openssl_pkcs7_sign(
+            $work_dir . '/manifest.json',
+            $work_dir . '/signature',
+            'file://' . $cert_path,
+            ['file://' . $key_path, ''], 
+            [],
+            PKCS7_BINARY | PKCS7_DETACHED,
+            $wwdr_path
+        );
+
+        $sig = file_get_contents($work_dir . '/signature');
+        $sig = base64_decode(trim(explode("\n\n", $sig)[3]));
+        file_put_contents($work_dir . '/signature', $sig);
+
+        $pkpass = $work_dir . '/tessera.pkpass';
+        $zip = new ZipArchive();
+        $zip->open($pkpass, ZipArchive::CREATE);
+        foreach (scandir($work_dir) as $f) {
+            if (!in_array($f, ['.', '..', 'tessera.pkpass'])) $zip->addFile($work_dir . '/' . $f, $f);
+        }
+        $zip->close();
+
+        header('Content-Type: application/vnd.apple.pkpass');
+        header('Content-Disposition: attachment; filename="Tessera_Biblioteca.pkpass"');
+        readfile($pkpass);
+
+        array_map('unlink', glob("$work_dir/*"));
+        rmdir($work_dir);
+        exit;
+    }
+}
+
+/* -----------------------------------------------------------
    GESTIONE AJAX (Username & Email)
 ----------------------------------------------------------- */
 if (isset($_POST['ajax_username']) && $uid) {
@@ -90,6 +177,100 @@ if (isset($_POST['ajax_send_email_code']) && $uid) {
     exit;
 }
 
+/* -----------------------------------------------------------
+   GENERAZIONE WALLET VIA POST
+----------------------------------------------------------- */
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'generate_wallet' && $uid) {
+    
+    // Recupero dati per il pass
+    $stm = $pdo->prepare("SELECT nome, cognome, codice_alfanumerico FROM utenti WHERE codice_alfanumerico = ?");
+    $stm->execute([$uid]);
+    $u = $stm->fetch(PDO::FETCH_ASSOC);
+
+    if ($u) {
+        // Percorsi certificati
+        $cert_dir = __DIR__ . '/certificates/';
+        $cert_path = $cert_dir . 'pass.pem';
+        $key_path  = $cert_dir . 'key.pem';
+        $wwdr_path = $cert_dir . 'wwdr.pem';
+
+        // 1. JSON del Pass
+        $pass_json = json_encode([
+            "formatVersion" => 1,
+            "passTypeIdentifier" => "pass.com.tuosito.library", 
+            "serialNumber" => "U-" . $u['codice_alfanumerico'],
+            "teamIdentifier" => "YOURTEAMID",
+            "barcode" => [
+                "message" => $u['codice_alfanumerico'],
+                "format" => "PKBarcodeFormatCode128",
+                "messageEncoding" => "iso-8859-1"
+            ],
+            "organizationName" => "Biblioteca Scrum",
+            "description" => "Tessera Personale",
+            "backgroundColor" => "rgb(63, 81, 53)",
+            "foregroundColor" => "rgb(255, 255, 255)",
+            "generic" => [
+                "primaryFields" => [
+                    ["key" => "member", "label" => "MEMBRO", "value" => $u['nome'] . " " . $u['cognome']]
+                ],
+                "secondaryFields" => [
+                    ["key" => "id", "label" => "ID", "value" => $u['codice_alfanumerico']]
+                ]
+            ]
+        ]);
+
+        // 2. Creazione cartella temporanea
+        $work_dir = sys_get_temp_dir() . '/pk_' . uniqid();
+        mkdir($work_dir);
+        file_put_contents($work_dir . '/pass.json', $pass_json);
+        
+        // Copia icona obbligatoria
+        $icon_src = __DIR__ . '/public/assets/icon.png';
+        if (file_exists($icon_src)) copy($icon_src, $work_dir . '/icon.png');
+
+        // 3. Manifest
+        $manifest = [];
+        foreach (scandir($work_dir) as $f) {
+            if ($f !== '.' && $f !== '..') $manifest[$f] = sha1_file($work_dir . '/' . $f);
+        }
+        file_put_contents($work_dir . '/manifest.json', json_encode($manifest));
+
+        // 4. Firma PKCS7
+        openssl_pkcs7_sign(
+            $work_dir . '/manifest.json',
+            $work_dir . '/signature',
+            'file://' . $cert_path,
+            ['file://' . $key_path, ''], 
+            [],
+            PKCS7_BINARY | PKCS7_DETACHED,
+            $wwdr_path
+        );
+
+        // Conversione firma S/MIME -> DER
+        $sig = file_get_contents($work_dir . '/signature');
+        $sig = base64_decode(trim(explode("\n\n", $sig)[3]));
+        file_put_contents($work_dir . '/signature', $sig);
+
+        // 5. Creazione ZIP (.pkpass)
+        $pkpass = $work_dir . '/pass.pkpass';
+        $zip = new ZipArchive();
+        $zip->open($pkpass, ZipArchive::CREATE);
+        foreach (scandir($work_dir) as $f) {
+            if (!in_array($f, ['.', '..', 'pass.pkpass'])) $zip->addFile($work_dir . '/' . $f, $f);
+        }
+        $zip->close();
+
+        // 6. Output headers
+        header('Content-Type: application/vnd.apple.pkpass');
+        header('Content-Disposition: attachment; filename="Tessera.pkpass"');
+        readfile($pkpass);
+
+        // Pulizia
+        array_map('unlink', glob("$work_dir/*"));
+        rmdir($work_dir);
+        exit;
+    }
+}
 /* -----------------------------------------------------------
    GESTIONE POST CLASSICA (Azioni Profilo)
 ----------------------------------------------------------- */
@@ -837,6 +1018,7 @@ require './src/includes/navbar.php';
             <div class="modal_actions">
                 <button class="btn_action btn-print" onclick="chiudiTessera()">Chiudi</button>
                 <button class="btn_action btn-download" onclick="scaricaPNG()">Scarica</button>
+                <button class="btn_action btn-wallet" onclick="salvaWallet()">Aggiungi a Wallet</button>
             </div>
         </div>
     </div>
@@ -970,6 +1152,21 @@ require './src/includes/navbar.php';
                 link.click();
             });
         }
+        function salvaWallet() {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = ''; 
+
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'action';
+        input.value = 'generate_wallet';
+
+        form.appendChild(input);
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
+    }
     </script>
 
 <?php require './src/includes/footer.php'; ?>
