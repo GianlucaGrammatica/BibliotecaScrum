@@ -37,6 +37,7 @@ la procedure restituirá un campo nuovo_id con l'id incrementante generato autom
 utente giá inserito:
 
 CALL sp_crea_utente_alfanumerico('TestUsername1', 'Cobra', 'Ivi', 'GRRRMN07S01A655L', 'prova@mail.com', 'passwordhash1');
+L'utente non esiste più, lascio la righa per esempio
 
 OUTPUT: nuovo_id 000001
 
