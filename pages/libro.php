@@ -558,11 +558,6 @@ require './src/includes/navbar.php';
                                         </div>
                                     <?php endif; ?>
                                     <div style="margin-bottom: 20px;">
-                                        <?php if ($libro['numero_copie_disponibili'] > 0): ?>
-                                            <span class="badge_avail badge_ok">Disponibile (<?= $libro['numero_copie_disponibili'] ?>)</span>
-                                        <?php else: ?>
-                                            <span class="badge_avail badge_ko">Non disponibile</span>
-                                        <?php endif; ?>
                                         <span class="media_voto_badge">★ <?= $mediaVoto ?>/5</span>
                                     </div>
                                     <div class="book_desc_box">
