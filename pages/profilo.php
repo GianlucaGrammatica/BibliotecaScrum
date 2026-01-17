@@ -1019,7 +1019,6 @@ require './src/includes/navbar.php';
             <div class="modal_actions">
                 <button class="btn_action btn-print" onclick="chiudiTessera()">Chiudi</button>
                 <button class="btn_action btn-download" onclick="scaricaPNG()">Scarica</button>
-                <button class="btn_action btn-wallet" onclick="salvaWallet()">Aggiungi a Wallet</button>
             </div>
         </div>
     </div>
