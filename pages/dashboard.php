@@ -67,10 +67,12 @@ $messaggio_db = "";
                 <h1>Statistiche</h1>
             </a>
 
+            <!--
             <a href="#" class="dashboard_card dashboard_card_10">
                 <img src="<?= $path ?>/public/assets/icone_categorie/Raccomandazione.png" alt="Icon">
                 <h1>Badge</h1>
             </a>
+            -->
             
         </div>
     </div>
