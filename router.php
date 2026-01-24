@@ -24,6 +24,7 @@ $whitelist = [
     '/badges' => 'pages/badges.php',
     '/notifiche' => 'pages/notifiche.php',
     '/pubblico' => 'pages/profiloPubblico.php',
+    '/game' => 'pages/game.php',
 
     //admin
     '/admin/dashboard-biblioteche' => 'pages/admin/D_biblioteche.php',
