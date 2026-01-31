@@ -19,7 +19,7 @@ $messaggio_db = "";
 $final_data = []; // Dati corretti (Soluzione)
 $shuffled_data = []; // Dati mescolati
 
-// Funzione Helper aggiornata (Copiata dalla logica del tuo index)
+// Funzione Helper corretta per bookCover
 function getGameCoverPath($isbn) {
     // Percorso relativo dalla root (dove gira il router)
     $localPath = "public/bookCover/$isbn.png";
@@ -36,6 +36,7 @@ function getGameCoverPath($isbn) {
 if (isset($pdo)) {
     try {
         // 1. PRENDIAMO 20 LIBRI CASUALI
+        // DISTINCT assicura unicità DB, ma il controllo PHP sotto è la sicurezza finale
         $query = 'SELECT DISTINCT l.isbn, l.titolo, a.nome, a.cognome, ct.categoria 
                   FROM copie AS c
                   JOIN libri AS l ON c.isbn = l.isbn
@@ -49,31 +50,43 @@ if (isset($pdo)) {
         $stmt->execute();
         $candidates = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        // 2. FILTRO PHP: Teniamo solo quelli con copertina fisica esistente
-        // Aggiornato per cercare in public/bookCover/ come da tua indicazione
+        // 2. FILTRO PHP CON CONTROLLO RIDONDANZA
         $valid_books = [];
+        $used_isbns = []; // Array per tracciare gli ISBN già inseriti
         
-        // Determina la root directory per il check file_exists
-        // Se giriamo da router.php, la CWD è la root.
-        
+        // PASSAGGIO 1: Cerchiamo libri con copertina fisica
         foreach ($candidates as $book) {
-            // Percorso come definito nel tuo file funzionante
+            // Se abbiamo già 4 libri, fermati
+            if (count($valid_books) >= 4) break;
+
+            // CONTROLLO RIDONDANZA: Se l'abbiamo già preso, saltalo
+            if (in_array($book['isbn'], $used_isbns)) {
+                continue;
+            }
+
+            // Verifica percorso (Logica corretta: public/bookCover/ISBN.png)
             $checkPath = "public/bookCover/" . $book['isbn'] . ".png";
             
             if (file_exists($checkPath)) {
                 $valid_books[] = $book;
+                $used_isbns[] = $book['isbn']; // Segniamo l'ISBN come usato
             }
-            
-            if (count($valid_books) >= 4) break;
         }
 
-        // Fallback: se non ne troviamo 4 con copertina PNG, riempiamo con gli altri
-        // (Anche se avranno il placeholder, almeno il gioco non crasha)
+        // PASSAGGIO 2 (FALLBACK): Se non ne abbiamo trovati 4 con copertina, riempiamo i buchi
         if (count($valid_books) < 4) {
             foreach ($candidates as $book) {
+                // Se abbiamo raggiunto 4, fermati
                 if (count($valid_books) >= 4) break;
-                $ids = array_column($valid_books, 'isbn');
-                if (!in_array($book['isbn'], $ids)) $valid_books[] = $book;
+
+                // CONTROLLO RIDONDANZA: Fondamentale anche qui
+                if (in_array($book['isbn'], $used_isbns)) {
+                    continue; 
+                }
+
+                // Aggiungiamo il libro (avrà il placeholder)
+                $valid_books[] = $book;
+                $used_isbns[] = $book['isbn'];
             }
         }
 
