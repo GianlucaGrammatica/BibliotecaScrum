@@ -19,14 +19,18 @@ $messaggio_db = "";
 $final_data = []; // Dati corretti (Soluzione)
 $shuffled_data = []; // Dati mescolati
 
-// Funzione Helper per trovare l'immagine
+// Funzione Helper aggiornata (Copiata dalla logica del tuo index)
 function getGameCoverPath($isbn) {
-    $root = dirname(__DIR__); // Risale alla root del progetto
-    $relPath = "public/assets/covers/$isbn";
+    // Percorso relativo dalla root (dove gira il router)
+    $localPath = "public/bookCover/$isbn.png";
     
-    if (file_exists($root . "/$relPath.jpg")) return "./$relPath.jpg";
-    if (file_exists($root . "/$relPath.png")) return "./$relPath.png";
-    return "./public/assets/base_cover.png";
+    // Controllo se il file esiste
+    if (file_exists($localPath)) {
+        return "./" . $localPath;
+    }
+    
+    // Fallback al placeholder
+    return "./public/assets/book_placeholder.jpg";
 }
 
 if (isset($pdo)) {
@@ -46,20 +50,25 @@ if (isset($pdo)) {
         $candidates = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         // 2. FILTRO PHP: Teniamo solo quelli con copertina fisica esistente
+        // Aggiornato per cercare in public/bookCover/ come da tua indicazione
         $valid_books = [];
-        $root = dirname(__DIR__); 
-
+        
+        // Determina la root directory per il check file_exists
+        // Se giriamo da router.php, la CWD è la root.
+        
         foreach ($candidates as $book) {
-            $f_jpg = $root . '/public/assets/covers/' . $book['isbn'] . '.jpg';
-            $f_png = $root . '/public/assets/covers/' . $book['isbn'] . '.png';
+            // Percorso come definito nel tuo file funzionante
+            $checkPath = "public/bookCover/" . $book['isbn'] . ".png";
             
-            if (file_exists($f_jpg) || file_exists($f_png)) {
+            if (file_exists($checkPath)) {
                 $valid_books[] = $book;
             }
+            
             if (count($valid_books) >= 4) break;
         }
 
-        // Fallback
+        // Fallback: se non ne troviamo 4 con copertina PNG, riempiamo con gli altri
+        // (Anche se avranno il placeholder, almeno il gioco non crasha)
         if (count($valid_books) < 4) {
             foreach ($candidates as $book) {
                 if (count($valid_books) >= 4) break;
@@ -202,7 +211,6 @@ if(file_exists('./src/includes/header.php')) {
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // Timer Inizio
     const startTime = Date.now();
     
     const draggables = document.querySelectorAll('.draggable-item');
@@ -259,7 +267,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         zone.classList.remove('ready-check-correct', 'ready-check-wrong');
 
-        // Scatta SOLO se ci sono 3 elementi
         if (count === 3) {
             let allCorrect = true;
             items.forEach(item => {
@@ -281,7 +288,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 5. VITTORIA TOTALE (Senza Alert, solo Redirect)
+    // 5. VITTORIA TOTALE
     function checkGlobalWin() {
         if (document.querySelectorAll('.ready-check-correct').length === 4) {
             const timeTaken = Date.now() - startTime;
@@ -289,7 +296,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const formData = new FormData();
             formData.append('tempo', timeTaken);
 
-            // Fetch alla rotta del router
             fetch('./save-score', {
                 method: 'POST',
                 body: formData
@@ -301,7 +307,6 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .catch(error => {
                 console.error("Errore salvataggio:", error);
-                // Redirect comunque per non bloccare l'utente
                 window.location.href = './classifica';
             });
         }
