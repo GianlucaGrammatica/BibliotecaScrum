@@ -14,7 +14,6 @@ $messaggio_db = '';
 // Eseguiamo l'INSERT solo se la connessione ($pdo) esiste
 if (isset($pdo)) {
     try {
-        // Se l'utente è loggato, usiamo il suo nome nel DB, altrimenti "Utente Web"
         $nome_visitatore = isset($_SESSION['username']) ? $_SESSION['username'] . ' (Logged)' : 'Utente Web';
 
         $query = 'select *, u.username from classifica as c
