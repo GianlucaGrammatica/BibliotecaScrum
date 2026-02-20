@@ -11,7 +11,7 @@
     align-items: flex-start;
 }
 
-/* --- COLONNA SINISTRA (Sticky) --- */
+/* --- COLONNA SINISTRA --- */
 .info_column:first-child {
     flex: 1 1 300px;
     background-color: #fff;
@@ -32,7 +32,7 @@
     gap: 50px;
 }
 
-/* --- AVATAR & INPUTS --- */
+/* --- AVATAR E INPUTS --- */
 .pfp_wrapper {
     position: relative;
     width: 120px;
@@ -113,7 +113,7 @@
     border-bottom: 1px dashed #eee;
 }
 
-/* Bottoni Slide (Salva) */
+/* Bottoni Slide */
 .btn_slide {
     position: absolute;
     right: 0;
@@ -136,7 +136,7 @@
     display: block;
 }
 
-/* Bottone Tessera (nella sidebar) */
+/* Bottone Tessera */
 .btn_tessera {
     background-color: transparent;
     color: var(--color_accent_dark);
@@ -238,9 +238,9 @@
     position: relative;
 }
 
-/* Card & Cover */
+/* Card e Cover */
 .card {
-    display: block; /* Importante per i link */
+    display: block;
     width: 100%;
     text-decoration: none;
 }
@@ -261,7 +261,7 @@
 /* Badge Img */
 .badge-img {
     width: 100%;
-    aspect-ratio: 1/1; /* Badge spesso sono quadrati o tondi */
+    aspect-ratio: 1/1;
     object-fit: contain;
     transition: transform 0.3s ease;
 }
@@ -272,8 +272,6 @@
     line-height: 1.4;
 }
 
-/* --- AZIONI MINI (Link testuali) --- */
-/* Questa è la parte che mancava o si è persa! */
 .mini-actions {
     margin-top: 5px;
 }
@@ -315,7 +313,7 @@
     cursor: default;
 }
 
-/* Badge placeholder (se manca immagine) */
+/* Badge placeholder */
 .badge-placeholder {
     width: 80px;
     height: 80px;
@@ -519,8 +517,7 @@
 
 
 /* ===============================
-   --- MEDIA QUERY (MOBILE) ---
-   Aggiungilo in fondo a style_profilo.css
+   --- MOBILE ---
 =============================== */
 
 @media (max-width: 768px) {
@@ -532,7 +529,6 @@
         padding: 0 15px;
     }
 
-    /* 2. Sidebar (Colonna Sinistra) */
     .info_column:first-child {
         position: relative;
         top: 0;
@@ -542,7 +538,6 @@
         box-sizing: border-box;
     }
 
-    /* 3. Contenuto Principale (Colonna Destra) */
     .info_column.extend_all {
         width: 100%;
         flex: 1 1 auto;
@@ -556,7 +551,6 @@
         box-sizing: border-box;
     }
 
-    /* 5. Statistiche */
     .stats_grid {
         grid-template-columns: 1fr;
         gap: 15px;
@@ -566,7 +560,6 @@
         font-size: 2.5rem;
     }
 
-    /* 6. Griglia Libri */
     .grid {
         gap: 15px;
         grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
@@ -577,7 +570,6 @@
         margin-bottom: 20px;
     }
 
-    /* 7. Multe e Liste */
     .fine_card {
         flex-wrap: wrap;
         gap: 10px;
@@ -592,7 +584,6 @@
         margin-left: auto;
     }
 
-    /* 8. Modals (Popup) */
     .modal_content {
         width: 85%;
         padding: 25px;
@@ -603,10 +594,7 @@
 
 
 /* ===============================
-   --- BADGES GLOW UP ---
-=============================== */
-/* ===============================
-   --- BADGES SECTION FIXED ---
+   --- BADGES SECTION ---
 =============================== */
 .badges_grid {
     display: grid;
