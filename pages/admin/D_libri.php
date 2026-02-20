@@ -426,9 +426,6 @@ require_once './src/includes/navbar.php';
                                              alt="Barcode" class="barcode_img">
                                         <div class="isbn_text"><?= htmlspecialchars($b['isbn']) ?></div>
                                     </div>
-                                    <?php if(!$is_editing): ?>
-                                        <img src="<?= $coverSrc ?>" style="width: 60px; margin-top: 10px; cursor:pointer; border-radius: 4px; border:1px solid #ddd;" onclick="openCover('<?= $coverSrc ?>', '<?= addslashes($b['titolo']) ?>')">
-                                    <?php endif; ?>
                                 </td>
                                 <td>
                                     <?php if ($is_editing): ?>
