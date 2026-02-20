@@ -368,22 +368,32 @@ if (isset($_POST['action']) && $_POST['action'] === 'richiedi_estensione') {
 // 5. PAGAMENTO MULTA (Simulazione)
 if (isset($_POST['action']) && $_POST['action'] === 'paga_multa_user') {
     $id_multa_target = filter_input(INPUT_POST, 'id_multa', FILTER_VALIDATE_INT);
+    
     if ($id_multa_target) {
         try {
+            // CORREZIONE: Usiamo LEFT JOIN e controlliamo anche il pattern testuale
+            // per permettere il pagamento delle multe manuali (senza prestito)
             $chk = $pdo->prepare("
                 SELECT m.id_multa 
                 FROM multe m
-                JOIN prestiti p ON m.id_prestito = p.id_prestito
-                WHERE m.id_multa = ? AND p.codice_alfanumerico = ? AND m.pagata = 0
+                LEFT JOIN prestiti p ON m.id_prestito = p.id_prestito
+                WHERE m.id_multa = :id 
+                  AND m.pagata = 0
+                  AND (p.codice_alfanumerico = :uid OR m.causale LIKE :pattern)
             ");
-            $chk->execute([$id_multa_target, $uid]);
+            
+            $chk->execute([
+                ':id' => $id_multa_target, 
+                ':uid' => $uid,
+                ':pattern' => "%[$uid]%"
+            ]);
 
             if ($chk->fetch()) {
                 $upd = $pdo->prepare("UPDATE multe SET pagata = 1 WHERE id_multa = ?");
                 $upd->execute([$id_multa_target]);
                 $messaggio_alert = "Pagamento registrato con successo! Grazie.";
             } else {
-                $messaggio_alert = "Impossibile elaborare il pagamento.";
+                $messaggio_alert = "Impossibile elaborare il pagamento. Multa non trovata o già pagata.";
             }
         } catch (Exception $e) {
             $messaggio_alert = "Errore transazione: " . $e->getMessage();
@@ -399,15 +409,28 @@ $utente = $stm->fetch(PDO::FETCH_ASSOC);
 /* ---- Dati Accessori ---- */
 // MULTE ATTIVE
 $stm = $pdo->prepare("
-    SELECT m.id_multa, m.importo, m.causale, m.data_creata, l.titolo
+    SELECT 
+        m.id_multa, 
+        m.importo, 
+        m.causale, 
+        m.data_creata, 
+        COALESCE(l.titolo, 'Sanzione Amministrativa') as titolo
     FROM multe m
-    JOIN prestiti p ON m.id_prestito = p.id_prestito
-    JOIN copie c ON p.id_copia = c.id_copia
-    JOIN libri l ON c.isbn = l.isbn
-    WHERE p.codice_alfanumerico = ? AND m.pagata = 0
+    LEFT JOIN prestiti p ON m.id_prestito = p.id_prestito
+    LEFT JOIN copie c ON p.id_copia = c.id_copia
+    LEFT JOIN libri l ON c.isbn = l.isbn
+    WHERE 
+        (p.codice_alfanumerico = :uid OR m.causale LIKE :pattern_uid)
+        AND m.pagata = 0
     ORDER BY m.data_creata DESC
 ");
-$stm->execute([$uid]);
+
+// Eseguiamo passando due parametri: il codice puro e il pattern per cercarlo nella stringa
+$stm->execute([
+    ':uid' => $uid,
+    ':pattern_uid' => "%[$uid]%"
+]);
+
 $multe_attive = $stm->fetchAll(PDO::FETCH_ASSOC);
 
 // PRESTITI ATTIVI
@@ -653,9 +676,7 @@ $page_css = "./public/css/style_profilo.css";
 require './src/includes/header.php';
 require './src/includes/navbar.php';
 ?>
-    <style>
 
-    </style>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Libre+Barcode+39+Text&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -693,13 +714,18 @@ require './src/includes/navbar.php';
                     <input type="hidden" name="confirm_email_final" value="1">
                 </form>
                 <div class=" edit_row" id="row-livello">
-                    <input type="number" min="0" max="2" id="inp-livello" class=" edit_input" value="<?= $utente['livello_privato'] ?? '' ?>" data-original="<?= $utente['livello_privato'] ?? '' ?>" placeholder="Livello privacy (0-2)">
-                    <button type="button" id="btn-livello" class=" btn_slide" onclick="ajaxSaveLivello()">Salva</button>
+                    <label style="width: 20%; font-size: 0.95rem;" for="inp-livello">Sicurezza:</label>
+                    <select onchange="ajaxSaveLivello()" id="inp-livello" class="edit_select" data-original="<?= $utente['livello_privato'] ?? '' ?>" placeholder="Livello privacy (0-2)">
+                        <option value="0">Alta</option>
+                        <option value="1">Media</option>
+                        <option value="2">Bassa</option>
+                    </select>
                 </div>
                 <div class=" edit_row"><input type="text" class=" edit_input" disabled value="<?= htmlspecialchars($utente['nome'] ?? '') ?>"></div>
                 <div class=" edit_row"><input type="text" class=" edit_input" disabled value="<?= htmlspecialchars($utente['cognome'] ?? '') ?>"></div>
                 <div class=" edit_row"><input type="text" class=" edit_input" disabled value="<?= htmlspecialchars($utente['codice_fiscale'] ?? '') ?>"></div>
             </div>
+
 
             <?php if (!empty($multe_attive)): ?>
                 <div class="fine_container">
@@ -748,6 +774,10 @@ require './src/includes/navbar.php';
                             </div>
                         <?php endforeach; ?>
                     </div>
+
+                    
+
+
                 <?php endif; ?>
             </div>
 
@@ -961,11 +991,8 @@ require './src/includes/navbar.php';
 
         // Logica Livello
         const inpLiv = document.getElementById('inp-livello');
+        inpLiv.value = "<?= $utente['livello_privato'] ?? '' ?>"
         const rowLiv = document.getElementById('row-livello');
-        inpLiv.addEventListener('input', function() {
-            if(this.value !== this.dataset.original) rowLiv.classList.add('changed');
-            else rowLiv.classList.remove('changed');
-        });
         async function ajaxSaveLivello() {
             const val = inpLiv.value;
             const formData = new FormData(); formData.append('ajax_livello', val);

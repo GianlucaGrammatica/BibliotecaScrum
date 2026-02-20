@@ -23,6 +23,7 @@
     font-size: 3.8rem;
     color: var(--color_text_dark_green);
     margin: 0;
+    text-align: center;
 }
 
 @media (max-width: 768px) {
