@@ -122,57 +122,71 @@ require_once './src/includes/navbar.php';
     <hr class="section_divider">
 
     <div id="section_books">
-        <h1 class="young-serif-regular section_title">Risultati Libri</h1>
-        <p class="results_meta">Trovati <strong id="results_count_books"><?= count($books) ?></strong> libri per "<strong><?= htmlspecialchars($search_query) ?></strong>"</p>
+        <?php if (empty($books) && empty($authors)): ?>
+            <h1 class="young-serif-regular section_title">Nessun risultato</h1>
+            <p class="results_meta">Non abbiamo trovato libri o autori per "<strong><?= htmlspecialchars($search_query) ?></strong>" 🤍</p>
+        <?php else: ?>
 
-        <div id="results_container_books" class="results_grid">
-            <?php foreach ($books as $isbn => $book): ?>
-                <div class="result_card book_card"
-                     data-titolo="<?= $book['titolo'] ?>"
-                     data-autore_nome="<?= $book['autore_nome'] ?>"
-                     data-autore_cognome="<?= $book['autore_cognome'] ?>">
+            <?php if (!empty($books)): ?>
+                <h1 class="young-serif-regular section_title">Risultati Libri</h1>
+                <p class="results_meta">Trovati <strong id="results_count_books"><?= count($books) ?></strong> libri per "<strong><?= htmlspecialchars($search_query) ?></strong>"</p>
 
-                    <div class="card_image_wrapper">
-                        <img src="<?= getCoverPath($book['isbn']) ?>" alt="Cover" class="book_cover">
-                    </div>
+                <div id="results_container_books" class="results_grid">
+                    <?php foreach ($books as $isbn => $book): ?>
+                        <div class="result_card book_card"
+                             data-titolo="<?= htmlspecialchars($book['titolo']) ?>"
+                             data-autore_nome="<?= htmlspecialchars($book['autore_nome']) ?>"
+                             data-autore_cognome="<?= htmlspecialchars($book['autore_cognome']) ?>">
 
-                    <div class="card_content">
-                        <h3 class="card_title"><?= highlight_text($book['titolo'], $search_query) ?></h3>
-                        <p class="card_info">
-                            <span>Autore:</span>
-                            <?= highlight_text($book['autore_nome'] . ' ' . $book['autore_cognome'], $search_query) ?>
-                        </p>
-                        <a href="./libro?isbn=<?= urlencode($isbn) ?>" class="card_link">Dettagli &rarr;</a>
-                    </div>
+                            <div class="card_image_wrapper">
+                                <img src="<?= getCoverPath($book['isbn']) ?>" alt="Cover" class="book_cover">
+                            </div>
+
+                            <div class="card_content">
+                                <h3 class="card_title"><?= highlight_text($book['titolo'], $search_query) ?></h3>
+                                <p class="card_info">
+                                    <span>Autore:</span>
+                                    <?= highlight_text($book['autore_nome'] . ' ' . $book['autore_cognome'], $search_query) ?>
+                                </p>
+                                <a href="./libro?isbn=<?= urlencode($isbn) ?>" class="card_link">Dettagli &rarr;</a>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
                 </div>
-            <?php endforeach; ?>
-        </div>
+            <?php endif; ?>
 
-        <div class="spacer_large"></div>
+            <?php if (!empty($books) && !empty($authors)): ?>
+                <div class="spacer_large"></div>
+            <?php endif; ?>
 
-        <h2 class="young-serif-regular section_title">Risultati Autori</h2>
-        <p class="results_meta">Trovati <strong id="results_count_authors"><?= count($authors) ?></strong> autori</p>
+            <?php if (!empty($authors)): ?>
+                <h2 class="young-serif-regular section_title">Risultati Autori</h2>
+                <p class="results_meta">Trovati <strong id="results_count_authors"><?= count($authors) ?></strong> autori</p>
 
-        <div id="results_container_authors" class="results_grid">
-            <?php foreach ($authors as $isbn => $author_book): ?>
-                <div class="result_card author_card"
-                     data-autore_nome="<?= $author_book['autore_nome'] ?>"
-                     data-autore_cognome="<?= $author_book['autore_cognome'] ?>">
+                <div id="results_container_authors" class="results_grid">
+                    <?php foreach ($authors as $isbn => $author_book): ?>
+                        <div class="result_card author_card"
+                             data-autore_nome="<?= htmlspecialchars($author_book['autore_nome']) ?>"
+                             data-autore_cognome="<?= htmlspecialchars($author_book['autore_cognome']) ?>">
 
-                    <div class="card_image_wrapper">
-                        <img src="<?= getCoverPath($author_book['isbn']) ?>" alt="Cover" class="book_cover">
-                    </div>
+                            <div class="card_image_wrapper">
+                                <img src="<?= getCoverPath($author_book['isbn']) ?>" alt="Cover" class="book_cover">
+                            </div>
 
-                    <div class="card_content">
-                        <h3 class="card_title">
-                            <?= highlight_text($author_book['autore_nome'] . ' ' . $author_book['autore_cognome'], $search_query) ?>
-                        </h3>
-                        <p class="card_info">Trovato nel libro: <em><?= $author_book['titolo'] ?></em></p>
-                        <a href="./libro?isbn=<?= urlencode($author_book['isbn']) ?>" class="card_link">Vedi opera &rarr;</a>
-                    </div>
+                            <div class="card_content">
+                                <h3 class="card_title">
+                                    <?= highlight_text($author_book['autore_nome'] . ' ' . $author_book['autore_cognome'], $search_query) ?>
+                                </h3>
+                                <p class="card_info">Trovato nel libro: <em><?= htmlspecialchars($author_book['titolo']) ?></em></p>
+                                <a href="./libro?isbn=<?= urlencode($author_book['isbn']) ?>" class="card_link">Vedi opera &rarr;</a>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
                 </div>
-            <?php endforeach; ?>
-        </div>
+            <?php endif; ?>
+
+        <?php endif; ?>
+    </div>
     </div>
 
     <div id="section_users" style="display:none;">
@@ -183,7 +197,7 @@ require_once './src/includes/navbar.php';
             <?php foreach ($users as $user): ?>
                 <div class="result_card user_card"
                      style="cursor: pointer;"
-                     onclick="location.href='/pubblico?username=<?= urlencode($user['username']) ?>'"
+                     onclick="location.href='./pubblico?username=<?= urlencode($user['username']) ?>'"
                      data-username="<?= $user['username'] ?>"
                      data-user_nome="<?= $user['nome'] ?>"
                      data-user_cognome="<?= $user['cognome'] ?>">
@@ -194,7 +208,7 @@ require_once './src/includes/navbar.php';
                             <?= highlight_text($user['nome'], $search_query) ?>
                             <?= highlight_text($user['cognome'], $search_query) ?>
                         </p>
-                        <a href="/pubblico?username=<?= urlencode($user['username']) ?>" class="card_link_subtle">Vedi Profilo</a>
+                        <a href="./pubblico?username=<?= urlencode($user['username']) ?>" class="card_link_subtle">Vedi Profilo</a>
                     </div>
                 </div>
             <?php endforeach; ?>
