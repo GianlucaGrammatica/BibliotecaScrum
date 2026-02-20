@@ -58,7 +58,6 @@
     }
 }
 
-/* Griglia Cards (Setup precedente) */
 .dashboard_card_1 { grid-area: 1 / 1 / 2 / 3; }
 .dashboard_card_2 { grid-area: 1 / 3 / 2 / 5; }
 .dashboard_card_3 { grid-area: 1 / 5 / 2 / 7; }
@@ -78,14 +77,12 @@
    --- STILI PER LE DASHBOARD ---
    ========================================= */
 
-/* Layout Generale Dashboard */
 .dashboard_container {
     max-width: 1200px;
     margin: 30px auto;
     padding: 0 10px;
 }
 
-/* Layout Generale Dashboard */
 .dashboard_container_larger {
     margin: 30px auto;
     padding: 0 10px;
@@ -114,7 +111,6 @@
     gap: 10px;
 }
 
-/* Barra di Ricerca */
 .search_bar_container {
     background: var(--color_background_ligth);
     padding: 15px;
@@ -136,7 +132,6 @@
     background: transparent;
 }
 
-/* Tabelle Admin */
 .table_card {
     background: #fff;
     border-radius: 20px;
@@ -180,7 +175,6 @@
     border-bottom: none;
 }
 
-/* Barcode Wrapper */
 .barcode_wrapper {
     display: flex;
     flex-direction: column;
@@ -206,7 +200,6 @@
     color: #666;
 }
 
-/* Form Aggiunta/Modifica */
 .add_book_section {
     display: none;
     margin-bottom: 30px;
@@ -264,7 +257,6 @@
     background: var(--color_background_ligth);
 }
 
-/* Bottoni Specifici */
 .btn_action {
     padding: 10px 20px;
     border: none;
@@ -290,7 +282,7 @@
 }
 
 .btn_fetcher {
-    background-color: #5d5dff; /* Colore specifico fetcher */
+    background-color: #5d5dff;
     color: #fff;
 }
 
@@ -357,7 +349,6 @@
     border: 1px solid #ccc;
 }
 
-/* Pagination */
 .pagination {
     display: flex;
     justify-content: center;
@@ -379,7 +370,6 @@
     border-color: var(--color_accent_dark);
 }
 
-/* Messaggi di Alert */
 .alert_msg {
     padding: 15px;
     border-radius: 8px;
@@ -435,7 +425,6 @@
 }
 
 .modal_content {
-    margin: auto;
     display: block;
     max-width: 90%;
     max-height: 90vh;
@@ -462,7 +451,6 @@
    --- REPORT DASHBOARD STYLES ---
    ========================================= */
 
-/* Griglia responsive per i KPI */
 .report_grid_kpi {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -470,7 +458,6 @@
     margin-bottom: 60px;
 }
 
-/* Griglia per i grafici*/
 .report_grid_charts {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
@@ -478,7 +465,6 @@
     margin-bottom: 30px;
 }
 
-/* Card KPI specifica */
 .kpi_card {
     background-color: var(--color_background_dark);
     border-radius: 18px;
@@ -488,7 +474,6 @@
     flex-direction: column;
     justify-content: space-between;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    height: 100%;
 }
 
 .kpi_card:hover {
@@ -525,7 +510,6 @@
     opacity: 0.5;
 }
 
-/* Contenitore Grafici */
 .chart_card {
     background-color: #fff;
     border-radius: 20px;
@@ -552,7 +536,6 @@
     margin: 0;
 }
 
-/* Navigazione Tab Report (stile pills) */
 .report_nav {
     display: flex;
     gap: 10px;
@@ -588,10 +571,9 @@
 
 
 /* =========================================
-   --- RICHIESTE & STATUS BADGES ---
+   --- RICHIESTE E STATUS BADGES ---
    ========================================= */
 
-/* Avatar Placeholder nelle tabelle */
 .user_avatar_placeholder {
     width: 38px;
     height: 38px;
@@ -606,7 +588,6 @@
     border: 2px solid var(--color_accent_ligth);
 }
 
-/* Status Badges */
 .status_badge {
     padding: 6px 12px;
     border-radius: 20px;
@@ -636,7 +617,6 @@
     border: 1px solid #ffecb5;
 }
 
-/* Bottoni Azione (Accetta/Rifiuta) */
 .btn_accept {
     background-color: var(--color_accent_medium);
     color: #fff;
@@ -704,10 +684,9 @@
 
 
 /* =========================================
-   --- GESTIONE PRESTITI & AZIONI ---
+   --- GESTIONE PRESTITI E AZZIONI ---
    ========================================= */
 
-/* Wrapper per le azioni nella tabella (sostituisce i d-flex inline) */
 .loan_action_form {
     display: flex;
     align-items: center;
@@ -725,7 +704,6 @@
     box-shadow: 0 2px 8px rgba(63, 81, 53, 0.1);
 }
 
-/* Input data più pulito */
 .input_date_small {
     border: none;
     background: transparent;
@@ -737,7 +715,6 @@
     outline: none;
 }
 
-/* Bottone restituzione custom (sostituisce btn-success) */
 .btn_return {
     background-color: var(--color_accent_medium);
     color: #fff;
@@ -759,7 +736,6 @@
     box-shadow: 0 4px 8px rgba(63, 81, 53, 0.2);
 }
 
-/* Badge per lo stato del prestito (ritardo/regolare) */
 .status_badge {
     padding: 6px 10px;
     border-radius: 8px;
@@ -769,18 +745,261 @@
 }
 
 .status_late {
-    background-color: #fce8e6; /* Rosso pastello soft */
+    background-color: #fce8e6;
     color: #c53030;
     border: 1px solid #feb2b2;
 }
 
 .status_regular {
-    background-color: #e6fffa; /* Verde acqua soft */
+    background-color: #e6fffa;
     color: #2c7a7b;
     border: 1px solid #b2f5ea;
 }
 
-/* Sovrascriviamo leggermente la tabella admin per allinearla verticalmente */
 .admin_table td {
     vertical-align: middle;
+}
+
+/* --- SCANNER PRESTITI DASHBOARD --- */
+.scanner-wrapper {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px;
+    font-family: 'Inter', sans-serif;
+}
+
+.config-box {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    text-align: center;
+    border: 1px solid #e0e0e0;
+}
+
+.biblio-select {
+    padding: 10px;
+    font-size: 16px;
+    margin: 15px 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    min-width: 250px;
+}
+
+.scan-section {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    margin-bottom: 20px;
+}
+
+.scan-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.scan-input-container {
+    text-align: center;
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    border: 2px dashed #ccc;
+}
+
+.scan-input {
+    width: 100%;
+    max-width: 400px;
+    padding: 12px;
+    font-size: 20px;
+    text-align: center;
+    border: 2px solid #3f5135;
+    border-radius: 6px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-family: monospace;
+}
+.scan-input:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(63, 81, 53, 0.2);
+}
+
+.user-card {
+    background: #eef5e9;
+    border-left: 5px solid #3f5135;
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 25px;
+}
+.user-card h3 { margin-top: 0; color: #3f5135; }
+.user-detail { font-size: 14px; margin-bottom: 5px; color: #333; }
+
+.prenotazioni-container {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.p-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid #f0f0f0;
+}
+.p-item:last-child { border-bottom: none; }
+.p-item:hover { background-color: #fcfbf5; }
+
+.p-info strong { display: block; font-size: 16px; color: #333; }
+.p-meta { font-size: 13px; color: #666; margin-top: 4px; }
+.p-badge-biblio {
+    display: inline-block;
+    background: #eee;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 11px;
+    color: #555;
+    margin-top: 3px;
+}
+
+.btn-main {
+    background-color: #3f5135;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+}
+.btn-main:hover { background-color: #2e3c27; }
+
+.btn-emit {
+    background-color: #3f5135;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+.btn-emit:hover { background-color: #2b3a24; }
+
+.alert-box {
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: 500;
+}
+
+/* =========================================
+   --- MULTE DASHBOARD ---
+   ========================================= */
+
+.kpi_grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+#emetti_multa_wrapper {
+    margin-bottom: 25px;
+}
+
+#titolo_emetti_multa {
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.form_grid_multe {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+    align-items: flex-end;
+}
+
+#causale_group {
+    grid-column: span 2;
+}
+
+@media (max-width: 768px) {
+    #causale_group {
+        grid-column: span 1;
+    }
+}
+
+.align_bottom {
+    display: flex;
+    align-items: flex-end;
+}
+
+.search_form_multe {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    width: 100%;
+}
+
+.search_form_multe .search_input {
+    flex: 1;
+}
+
+.select_stato {
+    width: auto;
+    min-width: 150px;
+}
+
+@media (max-width: 600px) {
+    .search_form_multe {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+.badge_status {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-family: "Instrument Sans", sans-serif;
+    display: inline-block;
+}
+
+.badge_paid {
+    background: #d4edda;
+    color: #155724;
+}
+
+.badge_unpaid {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.text_center { text-align: center; }
+.empty_td { padding: 40px; color: #888; }
+.text_muted { color: #444; }
+.text_bold { font-weight: bold; }
+.action_buttons_row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.inline_form {
+    display: inline;
+    margin: 0;
+}
+
+.btn_small {
+    padding: 6px 12px;
+    font-size: 0.85rem;
 }
