@@ -103,6 +103,25 @@
     border-radius: 0;
 }
 
+.edit_select {
+    width: 75%;
+    padding: 12px 0;
+    border: none;
+    margin: 0 0 0 5px;
+    border-bottom: 1px solid #ddd;
+    background-color: transparent;
+    font-family: inherit;
+    font-size: 0.95rem;
+    color: var(--color_text_black);
+    transition: border-color 0.3s;
+    border-radius: 0;
+}
+
+.edit_select:focus {
+    border-color: var(--color_accent_dark);
+    outline: none;
+}
+
 .edit_input:focus {
     border-color: var(--color_accent_dark);
     outline: none;

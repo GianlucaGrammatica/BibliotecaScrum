@@ -24,6 +24,9 @@ $whitelist = [
     '/badges' => 'pages/badges.php',
     '/notifiche' => 'pages/notifiche.php',
     '/pubblico' => 'pages/profiloPubblico.php',
+    '/game' => 'pages/game.php',
+    '/classifica' => 'pages/game_classifica.php',
+    '/save-score' => 'pages/save_score.php',
 
     //admin
     '/admin/dashboard-biblioteche' => 'pages/admin/D_biblioteche.php',
@@ -42,6 +45,8 @@ $whitelist = [
     '/bibliotecario/dashboard-richieste' => 'pages/bibliotecario/D_richieste.php',
     '/bibliotecario/gestione-multe' => 'pages/bibliotecario/gestione-multe.php',
 
+    //temp
+    '/timer' => 'pages/TODELETE_Test_Timer.php',
 ];
 
 
