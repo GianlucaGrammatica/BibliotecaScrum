@@ -388,7 +388,6 @@ body {
     padding: 14px 20px;
     text-align: left;
     border: none;
-    background: none;
     background-color: transparent;
     cursor: pointer;
     font-family: 'Instrument Sans', sans-serif;
@@ -419,14 +418,12 @@ body {
    --- NOTIFICATIONS DROPDOWN ---
 =============================== */
 
-/* Allarghiamo il dropdown per le notifiche, così è più leggibile */
 .dropdown_content.notifications {
     min-width: 320px;
     padding: 0;
-    overflow: hidden; /* Per i bordi arrotondati */
+    overflow: hidden;
 }
 
-/* Header con titolo "Nuove Notifiche" */
 .notifica_header_title {
     background-color: var(--color_accent_dark);
     color: var(--color_accent_ligth);
@@ -437,38 +434,33 @@ body {
     letter-spacing: 0.5px;
 }
 
-/* La singola riga della notifica (flex per separare testo e bottone X) */
 .notifica_row {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    border-bottom: 1px solid rgba(63, 81, 53, 0.1); /* accento dark molto leggero */
+    border-bottom: 1px solid rgba(63, 81, 53, 0.1);
     transition: background-color 0.15s ease-in;
     position: relative;
 }
 
-/* Effetto hover sull'intera riga */
 .notifica_row:hover {
     background-color: var(--color_accent_ligth_high);
 }
 
-/* Override dello stile base dei link nel dropdown per adattarlo al contenuto */
 .dropdown_content.notifications .notifica-link-content {
     display: flex;
     flex-direction: column;
     padding: 12px 14px;
-    flex-grow: 1; /* Occupa tutto lo spazio tranne la X */
-    border-bottom: none; /* Gestito dal contenitore padre */
+    flex-grow: 1;
+    border-bottom: none;
     gap: 4px;
 }
 
-/* Rimuoviamo l'hover di default del link globale perché usiamo quello della row */
 .dropdown_content.notifications .notifica-link-content:hover {
     background-color: transparent;
     color: inherit;
 }
 
-/* Stili del testo */
 .notifica_titolo {
     font-family: 'Instrument Sans', sans-serif;
     font-weight: 600;
@@ -491,7 +483,6 @@ body {
     font-weight: 500;
 }
 
-/* Bottone di chiusura (X) */
 .notifica_btn_close {
     background: none;
     border: none;
@@ -506,17 +497,16 @@ body {
 
 .notifica_btn_close:hover {
     opacity: 1;
-    color: #d32f2f; /* Un rosso soft per indicare 'rimuovi' */
+    color: #d32f2f;
     background: none;
 }
 
-/* Footer con "Mostra tutte" e "Pulisci" */
 .notifica_footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 10px 16px;
-    background-color: var(--color_background_dark); /* Leggermente più scuro */
+    background-color: var(--color_background_dark);
     border-top: 1px solid rgba(0,0,0,0.05);
 }
 
@@ -537,7 +527,7 @@ body {
 .notifica_btn_clean:hover {
     text-decoration: underline;
     color: var(--color_accent_medium);
-    background: none; /* Fix per override globale */
+    background: none;
 }
 
 

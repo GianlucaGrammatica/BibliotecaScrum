@@ -214,6 +214,7 @@ $edit_id = $_GET['edit'] ?? null;
 
 $title = "Dashboard Recensioni";
 $path = "../";
+$page_css = "../public/css/style_dashboards.css";
 require_once './src/includes/header.php';
 require_once './src/includes/navbar.php';
 ?>

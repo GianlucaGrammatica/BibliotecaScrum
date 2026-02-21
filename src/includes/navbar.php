@@ -9,19 +9,19 @@ if (session_status() === PHP_SESSION_NONE) {
 // --- LOGICA CAMBIO BIBLIOTECA (SOLO BIBLIOTECARI) ---
 if (isset($_POST['cambia_biblioteca']) && checkAccess('bibliotecario')) {
     $_SESSION['id_biblioteca_operativa'] = $_POST['id_biblioteca_selezionata'];
-    header("Refresh:0");
+    header('Refresh:0');
 }
 
 // Recupero dati
 $biblioteche_disponibili = [];
 $id_biblio_attuale = $_SESSION['id_biblioteca_operativa'] ?? null;
-$nome_biblio_attuale = "Seleziona Sede";
+$nome_biblio_attuale = 'Seleziona Sede';
 
 if (isset($_SESSION['logged']) && checkAccess('bibliotecario')) {
     try {
-        $stmt = $pdo->query("SELECT id, nome FROM biblioteche ORDER BY nome");
+        $stmt = $pdo->query('SELECT id, nome FROM biblioteche ORDER BY nome');
         $biblioteche_disponibili = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
+
         if (!$id_biblio_attuale && count($biblioteche_disponibili) > 0) {
             $id_biblio_attuale = $biblioteche_disponibili[0]['id'];
             $_SESSION['id_biblioteca_operativa'] = $id_biblio_attuale;
@@ -33,7 +33,9 @@ if (isset($_SESSION['logged']) && checkAccess('bibliotecario')) {
                 break;
             }
         }
-    } catch (PDOException $e) { error_log($e->getMessage()); }
+    } catch (PDOException $e) {
+        error_log($e->getMessage());
+    }
 }
 
 // --- NOTIFICHE ---
@@ -42,28 +44,30 @@ if (isset($_SESSION['codice_utente']) && isset($pdo)) {
     try {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (isset($_POST['azione']) && $_POST['azione'] === 'segna_tutte') {
-                $pdo->prepare("UPDATE notifiche SET visualizzato = 1 WHERE codice_alfanumerico = ?")->execute([$_SESSION['codice_utente']]);
-                header("Refresh:0");
+                $pdo->prepare('UPDATE notifiche SET visualizzato = 1 WHERE codice_alfanumerico = ?')->execute([$_SESSION['codice_utente']]);
+                header('Refresh:0');
             }
             if (isset($_POST['azione']) && $_POST['azione'] === 'segna_singola' && isset($_POST['id_notifica'])) {
-                $pdo->prepare("UPDATE notifiche SET visualizzato = 1 WHERE id_notifica = ? AND codice_alfanumerico = ?")->execute([$_POST['id_notifica'], $_SESSION['codice_utente']]);
-                header("Refresh:0");
+                $pdo->prepare('UPDATE notifiche SET visualizzato = 1 WHERE id_notifica = ? AND codice_alfanumerico = ?')->execute([$_POST['id_notifica'], $_SESSION['codice_utente']]);
+                header('Refresh:0');
             }
         }
-        $sql_nav_notifiche = "SELECT * FROM notifiche 
+        $sql_nav_notifiche = 'SELECT * FROM notifiche 
                               WHERE codice_alfanumerico = ? AND visualizzato = 0
                               AND (dataora_scadenza IS NULL OR dataora_scadenza > NOW())
-                              ORDER BY dataora_invio DESC LIMIT 5";
+                              ORDER BY dataora_invio DESC LIMIT 5';
         $stmt_nav = $pdo->prepare($sql_nav_notifiche);
         $stmt_nav->execute([$_SESSION['codice_utente']]);
         $lista_notifiche = $stmt_nav->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) { error_log($e->getMessage()); }
+    } catch (PDOException $e) {
+        error_log($e->getMessage());
+    }
 }
 
-if(isset($_POST["logout"])){
+if (isset($_POST['logout'])) {
     session_unset();
     session_destroy();
-    header("Location: login");
+    header('Location: login');
     exit;
 }
 ?>
@@ -133,10 +137,12 @@ if(isset($_POST["logout"])){
 
             <?php
             if (isset($_SESSION['logged']) && $_SESSION['logged'] === true) {
-                // Gestione pfp
-                $userPfp = $path . 'public/pfp/' . $_SESSION['codice_utente'] . '.png';
-                if (file_exists($userPfp)) {
-                    $pfpPath = $userPfp . '?v=' . time();
+                $filename = $_SESSION['codice_utente'] . '.png';
+                $urlPfp = $path . 'public/pfp/' . $filename;
+                $physicalPath = __DIR__ . '/../../public/pfp/' . $filename;
+
+                if (file_exists($physicalPath)) {
+                    $pfpPath = $urlPfp . '?v=' . time();
                 } else {
                     $pfpPath = $path . 'public/assets/base_pfp.png';
                 }

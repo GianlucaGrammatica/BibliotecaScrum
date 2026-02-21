@@ -477,96 +477,122 @@ require './src/includes/navbar.php';
                 </div>
             <?php endif; ?>
 
-            <div class="reviews_section">
-                <h2 class="reviews_title">Recensioni (<?= $totaleRecensioni ?>)</h2>
+            <div class="reviews_section_new">
+                <h2 class="reviews_title_new young-serif-regular">Recensioni (<?= $totaleRecensioni ?>)</h2>
 
                 <?php if ($uid): ?>
                     <?php if ($mia_recensione): ?>
-                        <div class="review_card my-review">
-                            <img src="<?= getPfpPath($mia_recensione['id_recensore']) ?>" alt="Io" class="review_pfp">
-                            <div class="review_content_col">
-                                <div id="my_review_view">
-                                    <div class="review_header_row">
-                                        <div class="review_user"><?= htmlspecialchars($mia_recensione['username']) ?> (Tu)</div>
-                                        <span class="review_date"><?= date('d/m/Y', strtotime($mia_recensione['data_commento'])) ?></span>
+                        <div class="review_card_new my_review_highlight contents">
+                            <a href="./pubblico?username=<?= urlencode($mia_recensione['username']) ?>" style="display: contents;">
+                                <img src="<?= getPfpPath($mia_recensione['id_recensore']) ?>" alt="Profile Picture" class="review_pfp_new">
+                            </a>
+                            <div class="review_main_col">
+                                <div id="myReviewView">
+                                    <div class="review_header_new">
+                                        <span class="review_author_name instrument-sans-semibold"><?= htmlspecialchars($mia_recensione['username']) ?> (Tu)</span>
+                                        <span class="review_date_new instrument-sans"><?= date('d/m/Y', strtotime($mia_recensione['data_commento'])) ?></span>
                                     </div>
-                                    <div class="review_stars_text">
-                                        <?php for ($i = 0; $i < $mia_recensione['voto']; $i++) echo "<span class='star_yellow'>★</span>"; for ($i = $mia_recensione['voto']; $i < 5; $i++) echo "<span class='star_grey'>★</span>"; ?>
-                                        <?php if($mia_recensione['ha_letto']): ?><span class="badge_read">Letto &#10003;</span><?php endif; ?>
+                                    <div class="review_rating_stars">
+                                        <?php
+                                        for ($i = 0; $i < $mia_recensione['voto']; $i++) echo '<img src="./public/assets/ui_icon_star.png" class="star_icon_display">';
+                                        for ($i = $mia_recensione['voto']; $i < 5; $i++) echo '<img src="./public/assets/ui_icon_star_darken.png" class="star_icon_display">';
+                                        ?>
+                                        <?php if($mia_recensione['ha_letto']): ?><span class="badge_read_new instrument-sans">Letto &#10003;</span><?php endif; ?>
                                     </div>
-                                    <div class="review_body"><?= nl2br(htmlspecialchars($mia_recensione['commento'])) ?></div>
-                                    <button type="button" class="btn_edit_circular" onclick="toggleEditMode()"><svg viewBox="0 0 24 24" class="icon_pencil"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></button>
+                                    <div class="review_text_new instrument-sans"><?= nl2br(htmlspecialchars($mia_recensione['commento'])) ?></div>
+
+                                    <div class="review_footer_new instrument-sans">
+                                        <div class="review_stats_new">
+                                            <span title="Mi piace">👍 <?= $mia_recensione['like_count'] ?? 0 ?></span>
+                                            <span title="Non mi piace">👎 <?= $mia_recensione['dislike_count'] ?? 0 ?></span>
+                                        </div>
+                                        <button type="button" class="general_button_dark" onclick="toggleReviewEditMode()">Modifica</button>
+                                    </div>
                                 </div>
-                                <div id="my_review_edit" class="hidden">
+
+                                <div id="myReviewEdit" class="hidden_element">
                                     <form method="POST">
                                         <input type="hidden" name="mode" value="update">
-                                        <input type="hidden" name="voto" id="voto_edit_input" value="<?= $mia_recensione['voto'] ?>">
-                                        <div class="interactive-rating" id="rating_edit">
-                                            <?php for($i=1;$i<=5;$i++): ?><span class="star-input" data-value="<?= $i ?>">★</span><?php endfor; ?>
+                                        <input type="hidden" name="voto" id="editReviewRatingInput" value="<?= $mia_recensione['voto'] ?>">
+
+                                        <div class="rating_selector_new" id="editReviewRating">
+                                            <?php for($i=1;$i<=5;$i++): ?>
+                                                <img src="./public/assets/ui_icon_star<?= $i <= $mia_recensione['voto'] ? '' : '_darken' ?>.png" class="star_input_img" data-value="<?= $i ?>">
+                                            <?php endfor; ?>
                                         </div>
-                                        <textarea name="commento" class="form_field" required rows="4"><?= htmlspecialchars($mia_recensione['commento']) ?></textarea>
-                                        <div style="margin-top:10px; display:flex; gap:10px;">
-                                            <button type="submit" name="submit_review" class=" general_button_dark">Salva</button>
-                                            <button type="button" onclick="toggleEditMode()" class="general_button_dark" style="background:#ccc;">Annulla</button>
+
+                                        <textarea name="commento" class="review_textarea_new instrument-sans" required rows="4"><?= htmlspecialchars($mia_recensione['commento']) ?></textarea>
+
+                                        <div class="review_edit_actions">
+                                            <button type="submit" name="submit_review" class="general_button_dark">Salva Modifiche</button>
+                                            <button type="button" onclick="toggleReviewEditMode()" class="general_button_dark" style="background-color: #888;">Annulla</button>
                                         </div>
                                     </form>
                                 </div>
                             </div>
                         </div>
                     <?php else: ?>
-                        <div class="review_card">
-                            <div class="review_content_col instrument-sans">
-                                <h3 class="young-serif-regular" style="margin-top:0;">Cosa ne pensi?</h3>
+                        <div class="review_card_new contents">
+                            <div class="review_main_col">
+                                <h3 class="young-serif-regular" style="margin-top:0; color: var(--color_text_dark_green);">Lascia una recensione</h3>
                                 <form method="POST">
                                     <input type="hidden" name="mode" value="insert">
-                                    <input type="hidden" name="voto" id="voto_new_input" value="0">
-                                    <div class="interactive-rating" id="rating_new">
-                                        <?php for($i=1;$i<=5;$i++): ?><span class="star-input" data-value="<?= $i ?>">★</span><?php endfor; ?>
+                                    <input type="hidden" name="voto" id="newReviewRatingInput" value="0">
+
+                                    <div class="rating_selector_new" id="newReviewRating">
+                                        <?php for($i=1;$i<=5;$i++): ?>
+                                            <img src="./public/assets/ui_icon_star_darken.png" class="star_input_img" data-value="<?= $i ?>">
+                                        <?php endfor; ?>
                                     </div>
-                                    <textarea name="commento" class="form_field" required rows="4" placeholder="La tua opinione aiuta gli altri lettori..."></textarea>
-                                    <button type="submit" name="submit_review" class="general_button_dark" style="margin-top:10px;">Pubblica Recensione</button>
+
+                                    <textarea name="commento" class="review_textarea_new instrument-sans" required rows="4" placeholder="Scrivi qui la tua opinione..."></textarea>
+                                    <button type="submit" name="submit_review" class="general_button_dark" style="margin-top: 10px;">Pubblica</button>
                                 </form>
                             </div>
                         </div>
                     <?php endif; ?>
                 <?php endif; ?>
 
-                <div class="reviews_list">
+                <div class="reviews_list_new">
                     <?php foreach ($recensioni_altri as $r): ?>
-                        <div class="review_card">
-                            <a style="display: contents" href="./pubblico?username=<?= $r['username'] ?>"><img src="<?= getPfpPath($r['id_recensore']) ?>" class="review_pfp"></a>
-                            <div class="review_content_col">
-                                <div class="review_header_row">
-                                    <div class="review_user"><?= htmlspecialchars($r['username']) ?></div>
-                                    <span class="review_date"><?= date('d/m/Y', strtotime($r['data_commento'])) ?></span>
+                        <div class="review_card_new contents">
+                            <a href="./pubblico?username=<?= urlencode($r['username']) ?>" style="display: contents;">
+                                <img src="<?= getPfpPath($r['id_recensore']) ?>" alt="Profile Picture" class="review_pfp_new">
+                            </a>
+                            <div class="review_main_col">
+                                <div class="review_header_new">
+                                    <span class="review_author_name instrument-sans-semibold"><?= htmlspecialchars($r['username']) ?></span>
+                                    <span class="review_date_new instrument-sans"><?= date('d/m/Y', strtotime($r['data_commento'])) ?></span>
                                 </div>
-                                <div class="review_stars_text">
-                                    <?php for ($i = 0; $i < $r['voto']; $i++) echo "<span class='star_yellow'>★</span>"; for ($i = $r['voto']; $i < 5; $i++) echo "<span class='star_grey'>★</span>"; ?>
-                                    <?php if($r['ha_letto']): ?><span class="badge_read">Letto &#10003;</span><?php endif; ?>
+
+                                <div class="review_rating_stars">
+                                    <?php
+                                    for ($i = 0; $i < $r['voto']; $i++) echo '<img src="./public/assets/ui_icon_star.png" class="star_icon_display">';
+                                    for ($i = $r['voto']; $i < 5; $i++) echo '<img src="./public/assets/ui_icon_star_darken.png" class="star_icon_display">';
+                                    ?>
+                                    <?php if($r['ha_letto']): ?><span class="badge_read_new instrument-sans">Letto &#10003;</span><?php endif; ?>
                                 </div>
-                                <div class="review_body"><?= nl2br(htmlspecialchars($r['commento'])) ?></div>
-                                <div class="review_footer_row">
+
+                                <div class="review_text_new instrument-sans"><?= nl2br(htmlspecialchars($r['commento'])) ?></div>
+
+                                <div class="review_actions_row instrument-sans">
                                     <?php if ($uid): ?>
-                                        <button class="vote-btn <?= isset($r['user_vote']) && $r['user_vote'] === 'like' ? 'active-like' : '' ?>"
-                                                onclick="handleVote(<?= $r['id_recensione'] ?>, 'like', this)"
+                                        <button class="vote_action_btn <?= isset($r['user_vote']) && $r['user_vote'] === 'like' ? 'vote_active_like' : '' ?>"
+                                                onclick="processVote(<?= $r['id_recensione'] ?>, 'like', this)"
                                                 data-review-id="<?= $r['id_recensione'] ?>">
-                                            <span>👍</span>
-                                            <span class="vote-count like-count-<?= $r['id_recensione'] ?>"><?= $r['like_count'] ?></span>
+                                            👍 <span class="vote_count_value like_count_target_<?= $r['id_recensione'] ?>"><?= $r['like_count'] ?></span>
                                         </button>
-                                        <button class="vote-btn <?= isset($r['user_vote']) && $r['user_vote'] === 'dislike' ? 'active-dislike' : '' ?>"
-                                                onclick="handleVote(<?= $r['id_recensione'] ?>, 'dislike', this)"
+                                        <button class="vote_action_btn <?= isset($r['user_vote']) && $r['user_vote'] === 'dislike' ? 'vote_active_dislike' : '' ?>"
+                                                onclick="processVote(<?= $r['id_recensione'] ?>, 'dislike', this)"
                                                 data-review-id="<?= $r['id_recensione'] ?>">
-                                            <span>👎</span>
-                                            <span class="vote-count dislike-count-<?= $r['id_recensione'] ?>"><?= $r['dislike_count'] ?></span>
+                                            👎 <span class="vote_count_value dislike_count_target_<?= $r['id_recensione'] ?>"><?= $r['dislike_count'] ?></span>
                                         </button>
                                     <?php else: ?>
-                                        <div class="vote-btn" style="cursor: default;">
-                                            <span>👍</span>
-                                            <span class="vote-count"><?= $r['like_count'] ?></span>
+                                        <div class="vote_action_btn static_vote">
+                                            👍 <span class="vote_count_value"><?= $r['like_count'] ?></span>
                                         </div>
-                                        <div class="vote-btn" style="cursor: default;">
-                                            <span>👎</span>
-                                            <span class="vote-count"><?= $r['dislike_count'] ?></span>
+                                        <div class="vote_action_btn static_vote">
+                                            👎 <span class="vote_count_value"><?= $r['dislike_count'] ?></span>
                                         </div>
                                     <?php endif; ?>
                                 </div>
@@ -672,78 +698,101 @@ require './src/includes/navbar.php';
 
         function activateMarker(id) { const m = libraryMarkers[id]; if(m) { map.setView(m.getLatLng(), 15); m.openPopup(); } }
 
-        function initStars(contId, inpId) {
-            const cont = document.getElementById(contId); const inp = document.getElementById(inpId);
-            if(!cont) return;
-            const stars = cont.querySelectorAll('.star-input');
-            const update = (v) => stars.forEach(s => s.classList.toggle('active', s.dataset.value <= v));
-            update(inp.value);
-            stars.forEach(s => {
-                s.onmouseover = () => stars.forEach(st => st.classList.toggle('hover', st.dataset.value <= s.dataset.value));
-                s.onmouseout = () => stars.forEach(st => st.classList.remove('hover'));
-                s.onclick = () => { inp.value = s.dataset.value; update(inp.value); };
+        function toggleReviewEditMode() {
+            const viewSection = document.getElementById('myReviewView');
+            const editSection = document.getElementById('myReviewEdit');
+            if (viewSection && editSection) {
+                viewSection.classList.toggle('hidden_element');
+                editSection.classList.toggle('hidden_element');
+            }
+        }
+
+        function initializeStarRating(containerId, inputId) {
+            const container = document.getElementById(containerId);
+            const inputElement = document.getElementById(inputId);
+            if (!container || !inputElement) return;
+
+            const starImages = container.querySelectorAll('.star_input_img');
+            const fullStarSrc = './public/assets/ui_icon_star.png';
+            const emptyStarSrc = './public/assets/ui_icon_star_darken.png';
+
+            const updateStars = (ratingValue) => {
+                starImages.forEach(star => {
+                    const starValue = parseInt(star.getAttribute('data-value'));
+                    if (starValue <= ratingValue) {
+                        star.src = fullStarSrc;
+                    } else {
+                        star.src = emptyStarSrc;
+                    }
+                });
+            };
+
+            starImages.forEach(star => {
+                star.style.cursor = 'pointer';
+                star.addEventListener('mouseover', () => {
+                    updateStars(parseInt(star.getAttribute('data-value')));
+                });
+                star.addEventListener('mouseout', () => {
+                    updateStars(parseInt(inputElement.value));
+                });
+                star.addEventListener('click', () => {
+                    inputElement.value = star.getAttribute('data-value');
+                    updateStars(parseInt(inputElement.value));
+                });
             });
         }
 
-        function toggleEditMode() {
-            document.getElementById('my_review_view').classList.toggle('hidden');
-            document.getElementById('my_review_edit').classList.toggle('hidden');
-        }
-
-        // GESTIONE LIKE/DISLIKE
-        async function handleVote(idRecensione, tipoVoto, btnElement) {
+        async function processVote(reviewId, voteType, buttonElement) {
             try {
-                const formData = new FormData();
-                formData.append('id_recensione', idRecensione);
-                formData.append('tipo_voto', tipoVoto);
-                formData.append('action', 'doLike');
+                const payload = new FormData();
+                payload.append('id_recensione', reviewId);
+                payload.append('tipo_voto', voteType);
+                payload.append('action', 'doLike');
 
-                const response = await fetch(window.location.href, {
+                const request = await fetch(window.location.href, {
                     method: 'POST',
-                    body: formData
+                    body: payload
                 });
 
-                const data = await response.json();
+                const responseData = await request.json();
 
-                if (data.success) {
-                    // Aggiorna conteggi
-                    const likeCountEl = document.querySelector('.like-count-' + idRecensione);
-                    const dislikeCountEl = document.querySelector('.dislike-count-' + idRecensione);
+                if (responseData.success) {
+                    const likeDisplay = document.querySelector(`.like_count_target_${reviewId}`);
+                    const dislikeDisplay = document.querySelector(`.dislike_count_target_${reviewId}`);
 
-                    if (likeCountEl) likeCountEl.textContent = data.like_count;
-                    if (dislikeCountEl) dislikeCountEl.textContent = data.dislike_count;
+                    if (likeDisplay) likeDisplay.textContent = responseData.like_count;
+                    if (dislikeDisplay) dislikeDisplay.textContent = responseData.dislike_count;
 
-                    // Aggiorna classi attive
-                    const container = btnElement.closest('.vote-buttons');
-                    if (container) {
-                        const buttons = container.querySelectorAll('.vote-btn');
-                        buttons.forEach(btn => {
-                            btn.classList.remove('active-like', 'active-dislike');
+                    const actionsContainer = buttonElement.closest('.review_actions_row');
+                    if (actionsContainer) {
+                        const allButtons = actionsContainer.querySelectorAll('.vote_action_btn');
+                        allButtons.forEach(btn => {
+                            btn.classList.remove('vote_active_like', 'vote_active_dislike');
                         });
 
-                        if (data.user_vote === 'like') {
-                            const likeBtn = container.querySelector('[onclick*="like"]');
-                            if (likeBtn) likeBtn.classList.add('active-like');
-                        } else if (data.user_vote === 'dislike') {
-                            const dislikeBtn = container.querySelector('[onclick*="dislike"]');
-                            if (dislikeBtn) dislikeBtn.classList.add('active-dislike');
+                        if (responseData.user_vote === 'like') {
+                            const likeBtn = actionsContainer.querySelector('[onclick*="like"]');
+                            if (likeBtn) likeBtn.classList.add('vote_active_like');
+                        } else if (responseData.user_vote === 'dislike') {
+                            const dislikeBtn = actionsContainer.querySelector('[onclick*="dislike"]');
+                            if (dislikeBtn) dislikeBtn.classList.add('vote_active_dislike');
                         }
                     }
 
-                    // Mostra notifica
-                    showNotification(data.message);
+                    showNotification(responseData.message);
                 } else {
-                    showNotification(data.message || 'Errore durante il voto');
+                    showNotification(responseData.message || 'Error processing vote');
                 }
-            } catch (error) {
-                console.error('Errore:', error);
-                showNotification('Errore di connessione');
+            } catch (fetchError) {
+                console.error(`Vote request failed for review ID ${reviewId}:`, fetchError);
+                showNotification('Connection error occurred');
             }
         }
 
         document.addEventListener("DOMContentLoaded", () => {
             initMap(); renderNextBatch();
-            initStars('rating_new', 'voto_new_input'); initStars('rating_edit', 'voto_edit_input');
+            initializeStarRating('newReviewRating', 'newReviewRatingInput');
+            initializeStarRating('editReviewRating', 'editReviewRatingInput');
         });
     </script>
 

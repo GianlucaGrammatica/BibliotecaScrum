@@ -134,131 +134,119 @@ try {
 
 $title = "Dashboard Multe";
 $path = "../";
+$page_css = "../public/css/style_dashboards.css";
 require_once './src/includes/header.php';
 require_once './src/includes/navbar.php';
 ?>
 
-<style>
-    .page-title { font-family: "Young Serif", serif; font-size: 2.5rem; color: #333; margin: 1em 0; }
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 30px; }
-    .stat-card { background: transparent; color: #2c2c2c; border: solid 3px #2c2c2c; padding: 20px; border-radius: 12px; text-align: center; }
-    .stat-value { font-family: "Young Serif", serif; font-size: 1.5rem; font-weight: bold; }
-    .stat-label { font-family: "Young Serif", serif; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }
-
-    .box-action { background: #faf9f6; padding: 25px; border-radius: 12px; border: 1px solid #eae3d2; font-family: "Instrument Sans", sans-serif; margin-bottom: 25px; }
-    
-    .table-wrapper { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-    .reviews-table { width: 100%; border-collapse: collapse; }
-    .reviews-table thead { background-color: #eae3d2; }
-    .reviews-table th { padding: 15px; text-align: left; font-family: "Young Serif", serif; color: #2c2c2c; }
-    .reviews-table td { padding: 15px; border-bottom: 1px solid #f5f5f5; font-family: "Instrument Sans", sans-serif; }
-
-    .btn { padding: 10px 18px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-family: "Instrument Sans", sans-serif; text-decoration: none; display: inline-block; font-size: 0.85rem; }
-    .btn-green { background: #3f5135; color: white; }
-    .btn-pay { background: #27ae60; color: white; }
-    .btn-red { background: #e74c3c; color: white; }
-
-    input, select { padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-family: "Instrument Sans", sans-serif; }
-    .badge { padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; }
-    .alert { padding: 15px; border-radius: 8px; margin-bottom: 20px; font-family: "Instrument Sans", sans-serif; font-weight: 600; }
-</style>
-
-<div class="page_contents">
-    <h2 class="page-title">Gestione Sanzioni</h2>
-
-    <?php if ($messaggio_db): ?>
-        <div class="alert" style="background: <?= $class_messaggio === 'error' ? '#f8d7da' : '#d4edda' ?>; color: <?= $class_messaggio === 'error' ? '#721c24' : '#155724' ?>;">
-            <?= htmlspecialchars($messaggio_db) ?>
+    <div class="page_contents">
+        <div class="page_header">
+            <h2 class="page_title">Gestione Sanzioni</h2>
         </div>
-    <?php endif; ?>
 
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-label">Da Incassare</div>
-            <div class="stat-value">€ <?= number_format($stats['incasso'], 2) ?></div>
+        <?php if ($messaggio_db): ?>
+            <div class="alert_msg <?= $class_messaggio === 'error' ? 'alert_error' : 'alert_success' ?>">
+                <?= htmlspecialchars($messaggio_db) ?>
+            </div>
+        <?php endif; ?>
+
+        <div class="kpi_grid">
+            <div class="kpi_card">
+                <div class="kpi_header">
+                    <div class="kpi_label">Da Incassare</div>
+                </div>
+                <div class="kpi_value">€ <?= number_format($stats['incasso'], 2) ?></div>
+            </div>
+            <div class="kpi_card">
+                <div class="kpi_header">
+                    <div class="kpi_label">Multe Non Pagate</div>
+                </div>
+                <div class="kpi_value"><?= $stats['attive'] ?></div>
+            </div>
         </div>
-        <div class="stat-card">
-            <div class="stat-label">Multe Non Pagate</div>
-            <div class="stat-value"><?= $stats['attive'] ?></div>
+
+        <div class="add_form_wrapper" id="emetti_multa_wrapper">
+            <div class="w-100">
+                <h3 class="chart_title" id="titolo_emetti_multa">Emetti Multa Manuale</h3>
+                <form method="POST" class="form_grid_multe">
+                    <div class="form_group">
+                        <label class="form_label">Codice Alfanumerico</label>
+                        <input type="text" name="codice_alfanumerico" required placeholder="Es. 000008" class="edit_input">
+                    </div>
+                    <div class="form_group">
+                        <label class="form_label">Importo (€)</label>
+                        <input type="number" step="0.01" name="importo" required class="edit_input">
+                    </div>
+                    <div class="form_group" id="causale_group">
+                        <label class="form_label">Causale Dettagliata</label>
+                        <input type="text" name="causale" required placeholder="Es. Libro restituito con pagine mancanti" class="edit_input">
+                    </div>
+                    <div class="form_group align_bottom">
+                        <button type="submit" name="add_multa" class="btn_action btn_save w-100">Emetti Sanzione</button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
 
-    <div class="box-action">
-        <h3 style="font-family: 'Young Serif', serif; margin-top:0; margin-bottom: 20px;">Emetti Multa Manuale</h3>
-        <form method="POST" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; align-items: flex-end;">
-            <div>
-                <label style="display:block; font-size: 0.8rem; font-weight: bold; margin-bottom: 5px;">Codice Alfanumerico</label>
-                <input type="text" name="codice_alfanumerico" required placeholder="Es. 000008" style="width:100%;">
-            </div>
-            <div>
-                <label style="display:block; font-size: 0.8rem; font-weight: bold; margin-bottom: 5px;">Importo (€)</label>
-                <input type="number" step="0.01" name="importo" required style="width:100%;">
-            </div>
-            <div style="grid-column: span 2;">
-                <label style="display:block; font-size: 0.8rem; font-weight: bold; margin-bottom: 5px;">Causale Dettagliata</label>
-                <input type="text" name="causale" required placeholder="Es. Libro restituito con pagine mancanti" style="width:100%;">
-            </div>
-            <button type="submit" name="add_multa" class="btn btn-green">Emetti Sanzione</button>
-        </form>
-    </div>
+        <div class="search_bar_container">
+            <form method="GET" class="search_form_multe">
+                <input type="text" name="search" value="<?= htmlspecialchars($search) ?>" placeholder="Cerca in causale..." class="search_input">
+                <select name="stato" class="edit_input select_stato">
+                    <option value="">Tutti gli stati</option>
+                    <option value="non_pagata" <?= $filterStato==='non_pagata'?'selected':'' ?>>Pendente</option>
+                    <option value="pagata" <?= $filterStato==='pagata'?'selected':'' ?>>Pagata</option>
+                </select>
+                <button type="submit" class="btn_action btn_search">Filtra</button>
+            </form>
+        </div>
 
-    <div class="box-action" style="padding: 15px;">
-        <form method="GET" style="display: flex; gap: 15px; align-items: flex-end;">
-            <div style="flex: 1;">
-                <input type="text" name="search" value="<?= htmlspecialchars($search) ?>" placeholder="Cerca in causale..." style="width: 100%;">
-            </div>
-            <select name="stato">
-                <option value="">Tutti gli stati</option>
-                <option value="non_pagata" <?= $filterStato==='non_pagata'?'selected':'' ?>>Pendente</option>
-                <option value="pagata" <?= $filterStato==='pagata'?'selected':'' ?>>Pagata</option>
-            </select>
-            <button type="submit" class="btn" style="background: #2c2c2c; color: white;">Filtra</button>
-        </form>
-    </div>
-
-    <div class="table-wrapper">
-        <table class="reviews-table">
-            <thead>
-                <tr>
-                    <th>Data</th>
-                    <th>Causale (Codice Utente)</th>
-                    <th>Importo</th>
-                    <th>Stato</th>
-                    <th>Azioni</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if (empty($multe)): ?>
-                    <tr><td colspan="5" style="text-align:center; padding: 40px; color: #888;">Nessun record trovato.</td></tr>
-                <?php else: ?>
-                    <?php foreach ($multe as $m): ?>
+        <div class="table_card">
+            <div class="table_responsive">
+                <table class="admin_table">
+                    <thead>
                     <tr>
-                        <td><?= date('d/m/Y', strtotime($m['data_creata'])) ?></td>
-                        <td style="color: #444;"><?= htmlspecialchars($m['causale']) ?></td>
-                        <td style="font-weight:bold;">€ <?= number_format($m['importo'], 2) ?></td>
-                        <td>
-                            <span class="badge" style="background: <?= $m['pagata']?'#d4edda':'#f8d7da' ?>; color: <?= $m['pagata']?'#155724':'#721c24' ?>;">
-                                <?= $m['pagata'] ? 'PAGATA' : 'DA PAGARE' ?>
-                            </span>
-                        </td>
-                        <td>
-                            <?php if (!$m['pagata']): ?>
-                                <form method="POST" style="display:inline;">
-                                    <input type="hidden" name="pay_id" value="<?= $m['id_multa'] ?>">
-                                    <button type="submit" class="btn btn-pay">Salda</button>
-                                </form>
-                            <?php endif; ?>
-                            <form method="POST" style="display:inline;" onsubmit="return confirm('Eliminare questa sanzione?')">
-                                <input type="hidden" name="delete_id" value="<?= $m['id_multa'] ?>">
-                                <button type="submit" class="btn btn-red">Elimina</button>
-                            </form>
-                        </td>
+                        <th>Data</th>
+                        <th>Causale (Codice Utente)</th>
+                        <th>Importo</th>
+                        <th>Stato</th>
+                        <th>Azioni</th>
                     </tr>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </tbody>
-        </table>
+                    </thead>
+                    <tbody>
+                    <?php if (empty($multe)): ?>
+                        <tr><td colspan="5" class="text_center empty_td">Nessun record trovato.</td></tr>
+                    <?php else: ?>
+                        <?php foreach ($multe as $m): ?>
+                            <tr>
+                                <td><?= date('d/m/Y', strtotime($m['data_creata'])) ?></td>
+                                <td class="text_muted"><?= htmlspecialchars($m['causale']) ?></td>
+                                <td class="text_bold">€ <?= number_format($m['importo'], 2) ?></td>
+                                <td>
+                                <span class="badge_status <?= $m['pagata'] ? 'badge_paid' : 'badge_unpaid' ?>">
+                                    <?= $m['pagata'] ? 'PAGATA' : 'DA PAGARE' ?>
+                                </span>
+                                </td>
+                                <td>
+                                    <div class="action_buttons_row">
+                                        <?php if (!$m['pagata']): ?>
+                                            <form method="POST" class="inline_form">
+                                                <input type="hidden" name="pay_id" value="<?= $m['id_multa'] ?>">
+                                                <button type="submit" class="btn_action btn_save btn_small">Salda</button>
+                                            </form>
+                                        <?php endif; ?>
+                                        <form method="POST" class="inline_form" onsubmit="return confirm('Eliminare questa sanzione?')">
+                                            <input type="hidden" name="delete_id" value="<?= $m['id_multa'] ?>">
+                                            <button type="submit" class="btn_action btn_delete btn_small">Elimina</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-</div>
 
 <?php require_once './src/includes/footer.php'; ?>
